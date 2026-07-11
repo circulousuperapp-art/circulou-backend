@@ -21,5 +21,8 @@ jobs:
         distribution: 'temurin'
         cache: 'maven'
 
+    - name: Grant execute permission to Maven Wrapper
+      run: chmod +x mvnw
+
     - name: Build and Verify with Maven
       run: ./mvnw clean verify
