@@ -17,14 +17,14 @@ public class LojaMapper {
                 loja.getLogo(),
                 loja.getTempoMedioPreparo(),
                 loja.getAtiva(),
-                loja.getSeloConfianca()
+                loja.getSeloConfianca(),
+                loja.getLojistaProfile() != null ? loja.getLojistaProfile().getId() : null
         );
     }
 
     public Loja toEntity(LojaRequestDTO dto) {
         Loja loja = new Loja();
         updateEntityFromDto(loja, dto);
-        loja.setSenha(dto.getSenha());
         return loja;
     }
 

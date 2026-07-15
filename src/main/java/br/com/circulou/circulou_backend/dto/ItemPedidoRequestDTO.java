@@ -22,20 +22,10 @@ public class ItemPedidoRequestDTO {
     private Integer quantidade;
 
     @NotNull
-    @Positive
-    @Schema(description = "Preço unitário no momento da compra", example = "35.50")
-    private Double precoUnitario;
-
-    @NotNull
-    @PositiveOrZero
-    @Schema(description = "Subtotal do item (quantidade * preco)", example = "71.00")
-    private Double subtotal;
-
-    @NotNull
     @Schema(description = "ID do pedido associado", example = "1")
     private Long pedidoId;
 
     @NotNull
-    @Schema(description = "ID do produto associado", example = "1")
-    private Long produtoId;
+    @Schema(description = "ID da oferta associada", example = "1")
+    private Long ofertaId;
 }

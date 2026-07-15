@@ -27,14 +27,14 @@ public class ItemPedidoController {
     }
 
     @PostMapping
-    @Operation(summary = "Adicionar item ao pedido", description = "Adiciona um produto específico a um pedido existente")
+    @Operation(summary = "Adicionar item ao pedido", description = "Adiciona uma oferta específica a um pedido existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Item adicionado com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados de requisição inválidos", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Pedido ou Produto não encontrados", 
+        @ApiResponse(responseCode = "404", description = "Pedido ou Oferta não encontrados", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
@@ -94,7 +94,7 @@ public class ItemPedidoController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Item, Pedido ou Produto não encontrados", 
+        @ApiResponse(responseCode = "404", description = "Item, Pedido ou Oferta não encontrados", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))

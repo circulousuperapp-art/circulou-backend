@@ -36,7 +36,6 @@ class LojaServiceTest {
         loja.setId(1L);
         loja.setNome("Burger House");
         loja.setEmail("contato@burger.com");
-        loja.setSenha("encoded_senha");
     }
 
     @Test
@@ -101,23 +100,25 @@ class LojaServiceTest {
     @Test
     @DisplayName("Deve deletar loja com sucesso")
     void deveDeletarLojaComSucesso() {
-        when(lojaRepositoryPort.existsById(1L)).thenReturn(true);
-        doNothing().when(lojaRepositoryPort).deleteById(1L);
+        when(lojaRepositoryPort.findById(1L)).thenReturn(Optional.of(loja));
+        when(lojaRepositoryPort.save(any(Loja.class))).thenReturn(loja);
 
         assertDoesNotThrow(() -> lojaService.deletar(1L));
 
-        verify(lojaRepositoryPort, times(1)).existsById(1L);
-        verify(lojaRepositoryPort, times(1)).deleteById(1L);
+        assertFalse(loja.getAtiva());
+        verify(lojaRepositoryPort, times(1)).findById(1L);
+        verify(lojaRepositoryPort, times(1)).save(loja);
+        verify(lojaRepositoryPort, never()).deleteById(anyLong());
     }
 
     @Test
     @DisplayName("Deve lançar ResourceNotFoundException ao deletar loja inexistente")
     void deveLancarExcecaoAoDeletarLojaInexistente() {
-        when(lojaRepositoryPort.existsById(2L)).thenReturn(false);
+        when(lojaRepositoryPort.findById(2L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> lojaService.deletar(2L));
 
-        verify(lojaRepositoryPort, times(1)).existsById(2L);
+        verify(lojaRepositoryPort, times(1)).findById(2L);
         verify(lojaRepositoryPort, never()).deleteById(anyLong());
     }
 

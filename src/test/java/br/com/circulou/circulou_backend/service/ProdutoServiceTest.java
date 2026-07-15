@@ -34,15 +34,15 @@ class ProdutoServiceTest {
 
     @BeforeEach
     void setUp() {
-        loja = new Loja();
-        loja.setId(1L);
-        loja.setNome("Burger House");
-
         produto = new Produto();
         produto.setId(1L);
         produto.setNome("Hambúrguer");
-        produto.setPreco(30.0);
-        produto.setLoja(loja);
+        produto.setDescricao("Pão, carne e queijo");
+        produto.setMarca("Marca");
+        produto.setUnidadeMedida("un");
+        produto.setPeso(0.3);
+        produto.setCodigoBarras("123456");
+        produto.setAtivo(true);
     }
 
     @Test
@@ -114,23 +114,25 @@ class ProdutoServiceTest {
     @Test
     @DisplayName("Deve deletar produto com sucesso")
     void deveDeletarProdutoComSucesso() {
-        when(produtoRepositoryPort.existsById(1L)).thenReturn(true);
-        doNothing().when(produtoRepositoryPort).deleteById(1L);
+        when(produtoRepositoryPort.findById(1L)).thenReturn(Optional.of(produto));
+        when(produtoRepositoryPort.save(any(Produto.class))).thenReturn(produto);
 
         assertDoesNotThrow(() -> produtoService.deletar(1L));
 
-        verify(produtoRepositoryPort, times(1)).existsById(1L);
-        verify(produtoRepositoryPort, times(1)).deleteById(1L);
+        assertFalse(produto.getAtivo());
+        verify(produtoRepositoryPort, times(1)).findById(1L);
+        verify(produtoRepositoryPort, times(1)).save(produto);
+        verify(produtoRepositoryPort, never()).deleteById(anyLong());
     }
 
     @Test
     @DisplayName("Deve lançar ResourceNotFoundException ao deletar produto inexistente")
     void deveLancarExcecaoAoDeletarProdutoInexistente() {
-        when(produtoRepositoryPort.existsById(2L)).thenReturn(false);
+        when(produtoRepositoryPort.findById(2L)).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> produtoService.deletar(2L));
 
-        verify(produtoRepositoryPort, times(1)).existsById(2L);
+        verify(produtoRepositoryPort, times(1)).findById(2L);
         verify(produtoRepositoryPort, never()).deleteById(anyLong());
     }
 }

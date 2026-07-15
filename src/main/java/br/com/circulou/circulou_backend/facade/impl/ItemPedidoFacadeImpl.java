@@ -5,11 +5,11 @@ import br.com.circulou.circulou_backend.dto.ItemPedidoResponseDTO;
 import br.com.circulou.circulou_backend.mapper.ItemPedidoMapper;
 import br.com.circulou.circulou_backend.model.ItemPedido;
 import br.com.circulou.circulou_backend.model.Pedido;
-import br.com.circulou.circulou_backend.model.Produto;
+import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.port.in.ItemPedidoUseCase;
 import br.com.circulou.circulou_backend.service.ItemPedidoService;
 import br.com.circulou.circulou_backend.service.PedidoService;
-import br.com.circulou.circulou_backend.service.ProdutoService;
+import br.com.circulou.circulou_backend.service.OfertaService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,16 +19,16 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
 
     private final ItemPedidoService itemPedidoService;
     private final PedidoService pedidoService;
-    private final ProdutoService produtoService;
+    private final OfertaService ofertaService;
     private final ItemPedidoMapper itemPedidoMapper;
 
     public ItemPedidoFacadeImpl(ItemPedidoService itemPedidoService, 
                                  PedidoService pedidoService, 
-                                 ProdutoService produtoService,
+                                 OfertaService ofertaService,
                                  ItemPedidoMapper itemPedidoMapper) {
         this.itemPedidoService = itemPedidoService;
         this.pedidoService = pedidoService;
-        this.produtoService = produtoService;
+        this.ofertaService = ofertaService;
         this.itemPedidoMapper = itemPedidoMapper;
     }
 
@@ -49,7 +49,7 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
     @Override
     public ItemPedidoResponseDTO salvar(ItemPedidoRequestDTO dto) {
         ItemPedido itemPedido = itemPedidoMapper.toEntity(dto);
-        vincularRelacionamentos(itemPedido, dto.getPedidoId(), dto.getProdutoId());
+        vincularRelacionamentos(itemPedido, dto.getPedidoId(), dto.getOfertaId());
 
         ItemPedido itemPedidoSalvo = itemPedidoService.salvar(itemPedido);
         return itemPedidoMapper.toResponseDTO(itemPedidoSalvo);
@@ -60,7 +60,7 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
         ItemPedido itemPedido = itemPedidoService.buscarPorId(id);
 
         itemPedidoMapper.updateEntityFromDto(itemPedido, dto);
-        vincularRelacionamentos(itemPedido, dto.getPedidoId(), dto.getProdutoId());
+        vincularRelacionamentos(itemPedido, dto.getPedidoId(), dto.getOfertaId());
 
         ItemPedido itemPedidoAtualizado = itemPedidoService.atualizar(id, itemPedido);
         return itemPedidoMapper.toResponseDTO(itemPedidoAtualizado);
@@ -71,15 +71,15 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
         itemPedidoService.deletar(id);
     }
 
-    private void vincularRelacionamentos(ItemPedido itemPedido, Long pedidoId, Long produtoId) {
+    private void vincularRelacionamentos(ItemPedido itemPedido, Long pedidoId, Long ofertaId) {
         if (pedidoId != null) {
             Pedido pedido = pedidoService.buscarPorId(pedidoId);
             itemPedido.setPedido(pedido);
         }
 
-        if (produtoId != null) {
-            Produto produto = produtoService.buscarPorId(produtoId);
-            itemPedido.setProduto(produto);
+        if (ofertaId != null) {
+            Oferta oferta = ofertaService.buscarPorId(ofertaId);
+            itemPedido.setOferta(oferta);
         }
     }
 }

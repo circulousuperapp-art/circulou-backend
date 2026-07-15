@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,7 +21,7 @@ public class PedidoResponseDTO {
     private Long id;
 
     @Schema(description = "Valor total", example = "150.75")
-    private Double valorTotal;
+    private BigDecimal valorTotal;
 
     @Schema(description = "Status atual", example = "PENDENTE")
     private String status;
@@ -32,5 +34,8 @@ public class PedidoResponseDTO {
 
     @Schema(description = "ID da loja destino", example = "1")
     private Long lojaId;
+
+    @Schema(description = "Lista de itens do pedido")
+    private List<ItemPedidoResponseDTO> itens;
 
 }

@@ -2,15 +2,16 @@ package br.com.circulou.circulou_backend.facade.impl;
 
 import br.com.circulou.circulou_backend.dto.PedidoRequestDTO;
 import br.com.circulou.circulou_backend.dto.PedidoResponseDTO;
+import br.com.circulou.circulou_backend.mapper.ItemPedidoMapper;
 import br.com.circulou.circulou_backend.mapper.PedidoMapper;
-import br.com.circulou.circulou_backend.model.Loja;
-import br.com.circulou.circulou_backend.model.Pedido;
-import br.com.circulou.circulou_backend.model.Usuario;
+import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.port.in.PedidoUseCase;
 import br.com.circulou.circulou_backend.service.LojaService;
+import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
 import br.com.circulou.circulou_backend.service.UsuarioService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,16 +21,22 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     private final PedidoService pedidoService;
     private final UsuarioService usuarioService;
     private final LojaService lojaService;
+    private final OfertaService ofertaService;
     private final PedidoMapper pedidoMapper;
+    private final ItemPedidoMapper itemPedidoMapper;
 
     public PedidoFacadeImpl(PedidoService pedidoService, 
                             UsuarioService usuarioService, 
                             LojaService lojaService,
-                            PedidoMapper pedidoMapper) {
+                            OfertaService ofertaService,
+                            PedidoMapper pedidoMapper,
+                            ItemPedidoMapper itemPedidoMapper) {
         this.pedidoService = pedidoService;
         this.usuarioService = usuarioService;
         this.lojaService = lojaService;
+        this.ofertaService = ofertaService;
         this.pedidoMapper = pedidoMapper;
+        this.itemPedidoMapper = itemPedidoMapper;
     }
 
     @Override
@@ -47,9 +54,26 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     }
 
     @Override
+    @Transactional
     public PedidoResponseDTO salvar(PedidoRequestDTO dto) {
-        Pedido pedido = pedidoMapper.toEntity(dto);
+        Pedido pedido = new Pedido();
         vincularRelacionamentos(pedido, dto.getUsuarioId(), dto.getLojaId());
+
+        if (dto.getItens() != null) {
+            dto.getItens().forEach(itemDto -> {
+                Oferta oferta = ofertaService.buscarPorId(itemDto.getOfertaId());
+                
+                ItemPedido itemPedido = itemPedidoMapper.toEntity(itemDto);
+                itemPedido.setPedido(pedido);
+                itemPedido.setOferta(oferta);
+                
+                // Criação do snapshot comercial (ADR-001)
+                itemPedido.setNomeProduto(oferta.getProduto().getNome());
+                itemPedido.setPrecoUnitario(oferta.getPreco());
+                
+                pedido.getItens().add(itemPedido);
+            });
+        }
 
         Pedido pedidoSalvo = pedidoService.salvar(pedido);
         return pedidoMapper.toResponseDTO(pedidoSalvo);
@@ -58,10 +82,7 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     @Override
     public PedidoResponseDTO atualizar(Long id, PedidoRequestDTO dto) {
         Pedido pedido = pedidoService.buscarPorId(id);
-
-        pedidoMapper.updateEntityFromDto(pedido, dto);
-        vincularRelacionamentos(pedido, dto.getUsuarioId(), dto.getLojaId());
-
+        // Atualizações limitadas de pedido conforme regras de negócio
         Pedido pedidoAtualizado = pedidoService.atualizar(id, pedido);
         return pedidoMapper.toResponseDTO(pedidoAtualizado);
     }

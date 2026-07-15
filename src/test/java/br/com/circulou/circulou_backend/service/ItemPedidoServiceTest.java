@@ -2,6 +2,8 @@ package br.com.circulou.circulou_backend.service;
 
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.ItemPedido;
+import br.com.circulou.circulou_backend.model.Loja;
+import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.model.Pedido;
 import br.com.circulou.circulou_backend.model.Produto;
 import br.com.circulou.circulou_backend.port.out.ItemPedidoRepositoryPort;
@@ -32,21 +34,34 @@ class ItemPedidoServiceTest {
 
     private ItemPedido itemPedido;
     private Pedido pedido;
-    private Produto produto;
+    private Oferta oferta;
 
     @BeforeEach
     void setUp() {
         pedido = new Pedido();
         pedido.setId(1L);
 
-        produto = new Produto();
+        Loja loja = new Loja();
+        loja.setId(1L);
+        loja.setAtiva(true);
+
+        Produto produto = new Produto();
         produto.setId(1L);
+        produto.setAtivo(true);
+
+        oferta = new Oferta();
+        oferta.setId(1L);
+        oferta.setLoja(loja);
+        oferta.setProduto(produto);
+        oferta.setAtivo(true);
+        oferta.setDisponivel(true);
+        oferta.setEstoque(10);
 
         itemPedido = new ItemPedido();
         itemPedido.setId(1L);
         itemPedido.setQuantidade(2);
         itemPedido.setPedido(pedido);
-        itemPedido.setProduto(produto);
+        itemPedido.setOferta(oferta);
     }
 
     @Test

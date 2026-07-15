@@ -21,22 +21,16 @@ public class Produto {
     private Long id;
 
     private String nome;
-
     private String descricao;
+    private String marca;
+    private String unidadeMedida;
+    private Double peso;
+    private String codigoBarras;
 
-    private Double preco;
-
-    private Integer estoque;
-
-    private String categoria;
-
-    private String imagem;
-
+    // TODO: Ponto de extensão para futura implementação de Categoria
+    // A Categoria será um agregado próprio vinculado ao Produto em sprints futuras.
+    private String imagemPrincipal;
     private Boolean ativo;
-
-    @ManyToOne
-    @JoinColumn(name = "loja_id")
-    private Loja loja;
 
     @JsonIgnore
     @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)

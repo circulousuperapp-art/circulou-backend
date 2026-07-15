@@ -36,4 +36,7 @@ public class LojaResponseDTO {
 
     @Schema(description = "Indica se a loja possui selo de confiança", example = "true")
     private Boolean seloConfianca;
+
+    @Schema(description = "ID do Lojista Profile responsável", example = "1")
+    private Long lojistaProfileId;
 }

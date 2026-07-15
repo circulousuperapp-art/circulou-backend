@@ -8,6 +8,8 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -19,18 +21,30 @@ public class ItemPedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Integer quantidade;
 
-    private Double precoUnitario;
-
-    private Double subtotal;
-
     @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "pedido_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
-    @ManyToOne
-    @JoinColumn(name = "produto_id")
-    private Produto produto;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "oferta_id", nullable = false)
+    private Oferta oferta;
+
+    @Column(nullable = false)
+    private String nomeProduto;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precoUnitario;
+
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotal;
+
+    public void calcularSubtotal() {
+        if (this.precoUnitario != null && this.quantidade != null) {
+            this.subtotal = this.precoUnitario.multiply(BigDecimal.valueOf(this.quantidade));
+        }
+    }
 }

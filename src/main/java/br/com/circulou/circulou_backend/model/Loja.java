@@ -1,38 +1,39 @@
 package br.com.circulou.circulou_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
+@Table(name = "loja")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Loja {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
+    @Column(nullable = false, unique = true)
     private String email;
 
-    private String senha;
 
+    @Column(nullable = false)
     private String telefone;
 
     private String logo;
@@ -47,9 +48,9 @@ public class Loja {
     @JoinColumn(name = "endereco_id")
     private Endereco endereco;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "loja", cascade = CascadeType.ALL)
-    private List<Produto> produtos;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lojista_profile_id", nullable = false)
+    private LojistaProfile lojistaProfile;
 
     @JsonIgnore
     @OneToMany(mappedBy = "loja", cascade = CascadeType.ALL)

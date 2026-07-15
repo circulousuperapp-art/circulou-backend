@@ -2,7 +2,7 @@ package br.com.circulou.circulou_backend.adapter.out.persistence;
 
 import br.com.circulou.circulou_backend.model.Usuario;
 import br.com.circulou.circulou_backend.port.out.UsuarioRepositoryPort;
-import br.com.circulou.circulou_backend.repository.UsuarioRepository;
+import br.com.circulou.circulou_backend.repository.UsuarioJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.Optional;
 @Component
 public class UsuarioRepositoryAdapter implements UsuarioRepositoryPort {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioJpaRepository usuarioRepository;
 
-    public UsuarioRepositoryAdapter(UsuarioRepository usuarioRepository) {
+    public UsuarioRepositoryAdapter(UsuarioJpaRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
 

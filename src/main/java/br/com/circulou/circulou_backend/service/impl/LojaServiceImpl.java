@@ -46,10 +46,9 @@ public class LojaServiceImpl implements LojaService {
     @Override
     @Transactional
     public void deletar(Long id) {
-        if (!lojaRepositoryPort.existsById(id)) {
-            throw new ResourceNotFoundException("Loja não encontrada");
-        }
-        lojaRepositoryPort.deleteById(id);
+        Loja loja = buscarEntidadePorId(id);
+        loja.setAtiva(false);
+        lojaRepositoryPort.save(loja);
     }
 
     private Loja buscarEntidadePorId(Long id) {

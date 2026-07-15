@@ -24,7 +24,6 @@ class LojaControllerIT extends BaseIntegrationTest {
         LojaRequestDTO requestDTO = new LojaRequestDTO();
         requestDTO.setNome("Burger King Test");
         requestDTO.setEmail("bk@test.com");
-        requestDTO.setSenha("senha123");
         requestDTO.setTelefone("1144445555");
         requestDTO.setTempoMedioPreparo(30);
         requestDTO.setAtiva(true);

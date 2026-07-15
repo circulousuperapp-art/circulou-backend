@@ -1,14 +1,21 @@
 package br.com.circulou.circulou_backend.mapper;
 
+import br.com.circulou.circulou_backend.dto.ItemPedidoSimplesDTO;
 import br.com.circulou.circulou_backend.dto.PedidoRequestDTO;
 import br.com.circulou.circulou_backend.dto.PedidoResponseDTO;
+import br.com.circulou.circulou_backend.model.ItemPedido;
 import br.com.circulou.circulou_backend.model.Loja;
 import br.com.circulou.circulou_backend.model.Pedido;
 import br.com.circulou.circulou_backend.model.Usuario;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,9 +23,13 @@ class PedidoMapperTest {
 
     private PedidoMapper mapper;
 
+    @Mock
+    private ItemPedidoMapper itemPedidoMapper;
+
     @BeforeEach
     void setUp() {
-        mapper = new PedidoMapper();
+        MockitoAnnotations.openMocks(this);
+        mapper = new PedidoMapper(itemPedidoMapper);
     }
 
     @Test
@@ -32,11 +43,12 @@ class PedidoMapperTest {
 
         Pedido pedido = new Pedido();
         pedido.setId(1L);
-        pedido.setValorTotal(150.0);
+        pedido.setValorTotal(new BigDecimal("150.00"));
         pedido.setStatus("PENDENTE");
         pedido.setDataCriacao(LocalDateTime.now());
         pedido.setUsuario(usuario);
         pedido.setLoja(loja);
+        pedido.setItens(new ArrayList<>());
 
         // When
         PedidoResponseDTO responseDTO = mapper.toResponseDTO(pedido);
@@ -58,6 +70,7 @@ class PedidoMapperTest {
         pedido.setId(1L);
         pedido.setUsuario(null);
         pedido.setLoja(null);
+        pedido.setItens(null);
 
         // When
         PedidoResponseDTO responseDTO = mapper.toResponseDTO(pedido);
@@ -66,49 +79,24 @@ class PedidoMapperTest {
         assertNotNull(responseDTO);
         assertNull(responseDTO.getUsuarioId());
         assertNull(responseDTO.getLojaId());
+        assertTrue(responseDTO.getItens().isEmpty());
     }
 
     @Test
     void toEntity_ShouldMapCorrectly() {
         // Given
-        LocalDateTime now = LocalDateTime.now();
         PedidoRequestDTO requestDTO = new PedidoRequestDTO();
-        requestDTO.setValorTotal(200.0);
-        requestDTO.setStatus("ENTREGUE");
-        requestDTO.setDataCriacao(now);
         requestDTO.setUsuarioId(10L);
         requestDTO.setLojaId(20L);
+        requestDTO.setItens(List.of(new ItemPedidoSimplesDTO(2, 1L)));
 
         // When
         Pedido pedido = mapper.toEntity(requestDTO);
 
         // Then
         assertNotNull(pedido);
-        assertEquals(requestDTO.getValorTotal(), pedido.getValorTotal());
-        assertEquals(requestDTO.getStatus(), pedido.getStatus());
-        assertEquals(requestDTO.getDataCriacao(), pedido.getDataCriacao());
         assertNull(pedido.getUsuario());
         assertNull(pedido.getLoja());
-    }
-
-    @Test
-    void updateEntityFromDto_ShouldUpdateFields() {
-        // Given
-        Pedido pedido = new Pedido();
-        pedido.setStatus("PENDENTE");
-
-        LocalDateTime now = LocalDateTime.now();
-        PedidoRequestDTO requestDTO = new PedidoRequestDTO();
-        requestDTO.setStatus("CANCELADO");
-        requestDTO.setValorTotal(0.0);
-        requestDTO.setDataCriacao(now);
-
-        // When
-        mapper.updateEntityFromDto(pedido, requestDTO);
-
-        // Then
-        assertEquals(requestDTO.getStatus(), pedido.getStatus());
-        assertEquals(requestDTO.getValorTotal(), pedido.getValorTotal());
-        assertEquals(requestDTO.getDataCriacao(), pedido.getDataCriacao());
+        assertTrue(pedido.getItens().isEmpty()); // itens são tratados na Facade
     }
 }

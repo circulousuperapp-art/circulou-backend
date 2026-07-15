@@ -1,8 +1,6 @@
 package br.com.circulou.circulou_backend.controller;
 
 import br.com.circulou.circulou_backend.integration.BaseIntegrationTest;
-import br.com.circulou.circulou_backend.dto.LojaRequestDTO;
-import br.com.circulou.circulou_backend.dto.LojaResponseDTO;
 import br.com.circulou.circulou_backend.dto.ProdutoRequestDTO;
 import br.com.circulou.circulou_backend.dto.ProdutoResponseDTO;
 import br.com.circulou.circulou_backend.dto.UsuarioRequestDTO;
@@ -19,8 +17,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ProdutoControllerIT extends BaseIntegrationTest {
-
-    private Long lojaId;
     private String token;
 
     @BeforeEach
@@ -39,22 +35,6 @@ class ProdutoControllerIT extends BaseIntegrationTest {
                         .content(objectMapper.writeValueAsString(usuarioDTO)))
                 .andExpect(status().isOk());
         token = obterTokenAutenticacao(usuarioDTO.getEmail(), "senha123");
-
-        LojaRequestDTO lojaDTO = new LojaRequestDTO();
-        lojaDTO.setNome("Loja de Produtos");
-        lojaDTO.setEmail("loja.produtos@test.com");
-        lojaDTO.setSenha("123456");
-        lojaDTO.setTelefone("1133334444");
-        lojaDTO.setTempoMedioPreparo(20);
-
-        MvcResult result = mockMvc.perform(post("/lojas")
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(lojaDTO)))
-                .andReturn();
-
-        LojaResponseDTO response = objectMapper.readValue(result.getResponse().getContentAsString(), LojaResponseDTO.class);
-        lojaId = response.getId();
     }
 
     @Test
@@ -64,11 +44,11 @@ class ProdutoControllerIT extends BaseIntegrationTest {
         ProdutoRequestDTO requestDTO = new ProdutoRequestDTO();
         requestDTO.setNome("X-Burger");
         requestDTO.setDescricao("Pão, carne e queijo");
-        requestDTO.setPreco(25.0);
-        requestDTO.setEstoque(100);
-        requestDTO.setCategoria("Lanches");
+        requestDTO.setMarca("Marca");
+        requestDTO.setUnidadeMedida("un");
+        requestDTO.setPeso(0.2);
+        requestDTO.setCodigoBarras("111222333");
         requestDTO.setAtivo(true);
-        requestDTO.setLojaId(lojaId);
 
         MvcResult resultPost = mockMvc.perform(post("/produtos")
                         .header("Authorization", token)

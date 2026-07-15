@@ -2,7 +2,7 @@ package br.com.circulou.circulou_backend.adapter.out.persistence;
 
 import br.com.circulou.circulou_backend.model.Produto;
 import br.com.circulou.circulou_backend.port.out.ProdutoRepositoryPort;
-import br.com.circulou.circulou_backend.repository.ProdutoRepository;
+import br.com.circulou.circulou_backend.repository.ProdutoJpaRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.Optional;
 @Component
 public class ProdutoRepositoryAdapter implements ProdutoRepositoryPort {
 
-    private final ProdutoRepository produtoRepository;
+    private final ProdutoJpaRepository produtoRepository;
 
-    public ProdutoRepositoryAdapter(ProdutoRepository produtoRepository) {
+    public ProdutoRepositoryAdapter(ProdutoJpaRepository produtoRepository) {
         this.produtoRepository = produtoRepository;
     }
 

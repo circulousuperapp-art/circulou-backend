@@ -54,7 +54,7 @@ public class LojaController {
     @Operation(summary = "Buscar loja por ID", description = "Retorna os detalhes de uma loja específica")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Loja encontrada"),
-        @ApiResponse(responseCode = "404", description = "Loja não encontrada", 
+        @ApiResponse(responseCode = "404", description = "Loja não encontrada",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
@@ -64,10 +64,10 @@ public class LojaController {
     }
 
     @DeleteMapping("/{id}")
-    @Operation(summary = "Deletar uma loja", description = "Remove uma loja do sistema")
+    @Operation(summary = "Deletar uma loja (Inativação)", description = "Realiza a inativação lógica de uma loja no sistema")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Loja deletada com sucesso"),
-        @ApiResponse(responseCode = "404", description = "Loja não encontrada", 
+        @ApiResponse(responseCode = "404", description = "Loja não encontrada",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
@@ -82,7 +82,7 @@ public class LojaController {
         @ApiResponse(responseCode = "200", description = "Loja atualizada com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados de requisição inválidos", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Loja não encontrada", 
+        @ApiResponse(responseCode = "404", description = "Loja não encontrada",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))

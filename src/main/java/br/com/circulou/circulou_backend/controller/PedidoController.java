@@ -34,7 +34,7 @@ public class PedidoController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Usuário ou Loja não encontrados", 
+        @ApiResponse(responseCode = "404", description = "Usuário ou Loja não encontrados",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
@@ -94,7 +94,7 @@ public class PedidoController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Pedido, Usuário ou Loja não encontrados", 
+        @ApiResponse(responseCode = "404", description = "Pedido, Usuário ou Loja não encontrados",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))

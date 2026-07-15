@@ -27,12 +27,10 @@ public class ProdutoController {
     }
 
     @PostMapping
-    @Operation(summary = "Adicionar novo produto", description = "Cadastra um novo produto vinculado a uma loja")
+    @Operation(summary = "Adicionar novo produto", description = "Cadastra um novo produto no catálogo base do sistema")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Produto cadastrado com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados inválidos", 
-            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Loja não encontrada", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
@@ -79,12 +77,12 @@ public class ProdutoController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualizar um produto", description = "Atualiza informações de um produto existente")
+    @Operation(summary = "Atualizar um produto", description = "Atualiza informações técnicas de um produto existente")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Produto atualizado com sucesso"),
         @ApiResponse(responseCode = "400", description = "Dados de requisição inválidos", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "404", description = "Produto ou Loja não encontrados", 
+        @ApiResponse(responseCode = "404", description = "Produto não encontrado",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))

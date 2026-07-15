@@ -24,10 +24,6 @@ public class LojaRequestDTO {
     @Schema(description = "E-mail de contato e login", example = "contato@burgerhouse.com")
     private String email;
 
-    @NotBlank
-    @Size(min = 6)
-    @Schema(description = "Senha de acesso (mínimo 6 caracteres)", example = "admin123")
-    private String senha;
 
     @NotBlank
     @Schema(description = "Telefone comercial", example = "1144445555")
@@ -49,4 +45,8 @@ public class LojaRequestDTO {
 
     @Schema(description = "Endereço físico da loja")
     private Endereco endereco;
+
+    @NotNull
+    @Schema(description = "ID do Lojista Profile responsável", example = "1")
+    private Long lojistaProfileId;
 }

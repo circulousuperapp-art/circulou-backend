@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,15 +21,18 @@ public class ItemPedidoResponseDTO {
     @Schema(description = "Quantidade", example = "2")
     private Integer quantidade;
 
+    @Schema(description = "Nome do produto no momento da compra", example = "Hambúrguer Artesanal")
+    private String nomeProduto;
+
     @Schema(description = "Preço unitário registrado", example = "35.50")
-    private Double precoUnitario;
+    private BigDecimal precoUnitario;
 
     @Schema(description = "Subtotal (quantidade * preco)", example = "71.00")
-    private Double subtotal;
+    private BigDecimal subtotal;
 
     @Schema(description = "ID do pedido associado", example = "1")
     private Long pedidoId;
 
-    @Schema(description = "ID do produto associado", example = "1")
-    private Long produtoId;
+    @Schema(description = "ID da oferta associada", example = "1")
+    private Long ofertaId;
 }

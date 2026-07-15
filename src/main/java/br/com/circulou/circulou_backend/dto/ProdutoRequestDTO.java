@@ -1,11 +1,9 @@
 package br.com.circulou.circulou_backend.dto;
 
-import br.com.circulou.circulou_backend.model.Loja;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,26 +24,26 @@ public class ProdutoRequestDTO {
     @Schema(description = "Descrição detalhada", example = "Delicioso hambúrguer com queijo e bacon")
     private String descricao;
 
-    @NotNull
-    @Positive
-    @Schema(description = "Preço unitário", example = "35.50")
-    private Double preco;
-
-    @NotNull
-    @PositiveOrZero
-    @Schema(description = "Quantidade em estoque", example = "10")
-    private Integer estoque;
+    @NotBlank
+    @Schema(description = "Marca do produto", example = "Seara")
+    private String marca;
 
     @NotBlank
-    @Schema(description = "Categoria do produto", example = "Lanches")
-    private String categoria;
+    @Schema(description = "Unidade de medida", example = "kg")
+    private String unidadeMedida;
 
-    @Schema(description = "URL da imagem do produto", example = "http://imagem.com/produto.jpg")
-    private String imagem;
+    @NotNull
+    @Positive
+    @Schema(description = "Peso do produto", example = "1.5")
+    private Double peso;
+
+    @NotBlank
+    @Schema(description = "Código de barras", example = "7891234567890")
+    private String codigoBarras;
+
+    @Schema(description = "URL da imagem principal", example = "http://imagem.com/produto.jpg")
+    private String imagemPrincipal;
 
     @Schema(description = "Status de atividade do produto", example = "true")
     private Boolean ativo;
-
-    @Schema(description = "ID da loja proprietária", example = "1")
-    private Long lojaId;
 }

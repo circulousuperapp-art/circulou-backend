@@ -46,10 +46,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public void deletar(Long id) {
-        if (!produtoRepositoryPort.existsById(id)) {
-            throw new ResourceNotFoundException("Produto não encontrado");
-        }
-        produtoRepositoryPort.deleteById(id);
+        Produto produto = buscarEntidadePorId(id);
+        produto.setAtivo(false);
+        produtoRepositoryPort.save(produto);
     }
 
     private Produto buscarEntidadePorId(Long id) {

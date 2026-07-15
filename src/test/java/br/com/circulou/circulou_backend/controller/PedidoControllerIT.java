@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +19,7 @@ class PedidoControllerIT extends BaseIntegrationTest {
 
     private Long usuarioId;
     private Long lojaId;
+    private Long ofertaId;
     private String token;
 
     @BeforeEach
@@ -43,26 +45,58 @@ class PedidoControllerIT extends BaseIntegrationTest {
         LojaRequestDTO lojaDTO = new LojaRequestDTO();
         lojaDTO.setNome("Loja Pedidos");
         lojaDTO.setEmail("loja.pedidos@test.com");
-        lojaDTO.setSenha("123456");
         lojaDTO.setTelefone("1133332222");
         lojaDTO.setTempoMedioPreparo(25);
         MvcResult resL = mockMvc.perform(post("/lojas")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(lojaDTO)))
+                .andExpect(status().isOk())
                 .andReturn();
         lojaId = objectMapper.readValue(resL.getResponse().getContentAsString(), LojaResponseDTO.class).getId();
+
+        // Criar Produto
+        ProdutoRequestDTO produtoDTO = new ProdutoRequestDTO();
+        produtoDTO.setNome("Produto Pedido");
+        produtoDTO.setDescricao("Desc");
+        produtoDTO.setAtivo(true);
+        MvcResult resP = mockMvc.perform(post("/produtos")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(produtoDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+        Long produtoId = objectMapper.readValue(resP.getResponse().getContentAsString(), ProdutoResponseDTO.class).getId();
+
+        // Criar Oferta
+        OfertaRequestDTO ofertaDTO = new OfertaRequestDTO();
+        ofertaDTO.setLojaId(lojaId);
+        ofertaDTO.setProdutoId(produtoId);
+        ofertaDTO.setPreco(new BigDecimal("75.00"));
+        ofertaDTO.setEstoque(100);
+        ofertaDTO.setAtivo(true);
+        ofertaDTO.setDisponivel(true);
+        MvcResult resO = mockMvc.perform(post("/ofertas")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(ofertaDTO)))
+                .andExpect(status().isOk())
+                .andReturn();
+        ofertaId = objectMapper.readValue(resO.getResponse().getContentAsString(), OfertaResponseDTO.class).getId();
     }
 
     @Test
-    @DisplayName("Deve realizar o CRUD completo de Pedido com Autenticação Real")
-    void deveRealizarCrudCompletoPedido() throws Exception {
+    @DisplayName("Deve realizar o fluxo comercial de Pedido com Autenticação Real")
+    void deveRealizarFluxoComercialPedido() throws Exception {
         // 1. Criar Pedido (POST)
         PedidoRequestDTO requestDTO = new PedidoRequestDTO();
-        requestDTO.setValorTotal(150.0);
-        requestDTO.setStatus("PENDENTE");
         requestDTO.setUsuarioId(usuarioId);
         requestDTO.setLojaId(lojaId);
+        
+        ItemPedidoSimplesDTO itemDto = new ItemPedidoSimplesDTO();
+        itemDto.setOfertaId(ofertaId);
+        itemDto.setQuantidade(2);
+        requestDTO.setItens(List.of(itemDto));
 
         MvcResult resultPost = mockMvc.perform(post("/pedidos")
                         .header("Authorization", token)
@@ -73,7 +107,11 @@ class PedidoControllerIT extends BaseIntegrationTest {
 
         PedidoResponseDTO responseDTO = objectMapper.readValue(resultPost.getResponse().getContentAsString(), PedidoResponseDTO.class);
         assertThat(responseDTO.getId()).isNotNull();
-        assertThat(responseDTO.getValorTotal()).isEqualTo(150.0);
+        // 75.00 * 2 = 150.00
+        assertThat(responseDTO.getValorTotal()).isEqualByComparingTo(new BigDecimal("150.00"));
+        assertThat(responseDTO.getStatus()).isEqualTo("PENDENTE");
+        assertThat(responseDTO.getItens()).hasSize(1);
+        assertThat(responseDTO.getItens().get(0).getNomeProduto()).isEqualTo("Produto Pedido");
 
         Long pedidoId = responseDTO.getId();
 
@@ -91,20 +129,12 @@ class PedidoControllerIT extends BaseIntegrationTest {
                     assertThat(list).isNotEmpty();
                 });
 
-        // 4. Atualizar (PUT)
-        requestDTO.setStatus("PREPARANDO");
-        mockMvc.perform(put("/pedidos/" + pedidoId)
-                        .header("Authorization", token)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(requestDTO)))
-                .andExpect(status().isOk());
-
-        // 5. Deletar (DELETE)
+        // 4. Deletar (DELETE)
         mockMvc.perform(delete("/pedidos/" + pedidoId)
                         .header("Authorization", token))
                 .andExpect(status().isOk());
 
-        // 6. Verificar que não existe mais (GET 404)
+        // 5. Verificar que não existe mais (GET 404)
         mockMvc.perform(get("/pedidos/" + pedidoId)
                         .header("Authorization", token))
                 .andExpect(status().isNotFound());

@@ -4,26 +4,27 @@ import br.com.circulou.circulou_backend.dto.LojaRequestDTO;
 import br.com.circulou.circulou_backend.dto.LojaResponseDTO;
 import br.com.circulou.circulou_backend.mapper.LojaMapper;
 import br.com.circulou.circulou_backend.model.Loja;
+import br.com.circulou.circulou_backend.model.LojistaProfile;
 import br.com.circulou.circulou_backend.port.in.LojaUseCase;
+import br.com.circulou.circulou_backend.port.out.LojistaProfileRepositoryPort;
 import br.com.circulou.circulou_backend.service.LojaService;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
 public class LojaFacadeImpl implements LojaUseCase {
-
     private final LojaService lojaService;
     private final LojaMapper lojaMapper;
-    private final PasswordEncoder passwordEncoder;
+    private final LojistaProfileRepositoryPort lojistaProfileRepositoryPort;
 
-    public LojaFacadeImpl(LojaService lojaService, 
+    public LojaFacadeImpl(LojaService lojaService,
                           LojaMapper lojaMapper,
-                          PasswordEncoder passwordEncoder) {
+                          LojistaProfileRepositoryPort lojistaProfileRepositoryPort) {
         this.lojaService = lojaService;
         this.lojaMapper = lojaMapper;
-        this.passwordEncoder = passwordEncoder;
+        this.lojistaProfileRepositoryPort = lojistaProfileRepositoryPort;
     }
 
     @Override
@@ -43,8 +44,9 @@ public class LojaFacadeImpl implements LojaUseCase {
     @Override
     public LojaResponseDTO salvar(LojaRequestDTO dto) {
         Loja loja = lojaMapper.toEntity(dto);
-        loja.setSenha(passwordEncoder.encode(loja.getSenha()));
         
+        vincularLojistaProfile(loja, dto.getLojistaProfileId());
+
         Loja lojaSalva = lojaService.salvar(loja);
         return lojaMapper.toResponseDTO(lojaSalva);
     }
@@ -55,12 +57,18 @@ public class LojaFacadeImpl implements LojaUseCase {
 
         lojaMapper.updateEntityFromDto(loja, dto);
         
-        if (dto.getSenha() != null && !dto.getSenha().isEmpty()) {
-            loja.setSenha(passwordEncoder.encode(dto.getSenha()));
-        }
+        vincularLojistaProfile(loja, dto.getLojistaProfileId());
 
         Loja lojaAtualizada = lojaService.atualizar(id, loja);
         return lojaMapper.toResponseDTO(lojaAtualizada);
+    }
+
+    private void vincularLojistaProfile(Loja loja, Long lojistaProfileId) {
+        if (lojistaProfileId != null) {
+            LojistaProfile profile = lojistaProfileRepositoryPort.findById(lojistaProfileId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Lojista Profile não encontrado"));
+            loja.setLojistaProfile(profile);
+        }
     }
 
     @Override

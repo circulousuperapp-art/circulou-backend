@@ -13,12 +13,12 @@ public class ProdutoMapper {
                 produto.getId(),
                 produto.getNome(),
                 produto.getDescricao(),
-                produto.getPreco(),
-                produto.getEstoque(),
-                produto.getCategoria(),
-                produto.getImagem(),
-                produto.getAtivo(),
-                produto.getLoja()
+                produto.getMarca(),
+                produto.getUnidadeMedida(),
+                produto.getPeso(),
+                produto.getCodigoBarras(),
+                produto.getImagemPrincipal(),
+                produto.getAtivo()
         );
     }
 
@@ -31,10 +31,11 @@ public class ProdutoMapper {
     public void updateEntityFromDto(Produto produto, ProdutoRequestDTO dto) {
         produto.setNome(dto.getNome());
         produto.setDescricao(dto.getDescricao());
-        produto.setPreco(dto.getPreco());
-        produto.setEstoque(dto.getEstoque());
-        produto.setCategoria(dto.getCategoria());
-        produto.setImagem(dto.getImagem());
+        produto.setMarca(dto.getMarca());
+        produto.setUnidadeMedida(dto.getUnidadeMedida());
+        produto.setPeso(dto.getPeso());
+        produto.setCodigoBarras(dto.getCodigoBarras());
+        produto.setImagemPrincipal(dto.getImagemPrincipal());
         produto.setAtivo(dto.getAtivo());
     }
 }

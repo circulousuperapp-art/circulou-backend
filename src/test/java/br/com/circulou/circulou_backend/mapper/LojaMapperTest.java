@@ -55,7 +55,6 @@ class LojaMapperTest {
         LojaRequestDTO requestDTO = new LojaRequestDTO();
         requestDTO.setNome("Nova Loja");
         requestDTO.setEmail("nova@loja.com");
-        requestDTO.setSenha("senha123");
         requestDTO.setTelefone("1188888888");
         requestDTO.setLogo("http://logo.com/2");
         requestDTO.setTempoMedioPreparo(45);
@@ -70,7 +69,6 @@ class LojaMapperTest {
         assertNotNull(loja);
         assertEquals(requestDTO.getNome(), loja.getNome());
         assertEquals(requestDTO.getEmail(), loja.getEmail());
-        assertEquals(requestDTO.getSenha(), loja.getSenha());
         assertEquals(requestDTO.getTelefone(), loja.getTelefone());
         assertEquals(requestDTO.getLogo(), loja.getLogo());
         assertEquals(requestDTO.getTempoMedioPreparo(), loja.getTempoMedioPreparo());

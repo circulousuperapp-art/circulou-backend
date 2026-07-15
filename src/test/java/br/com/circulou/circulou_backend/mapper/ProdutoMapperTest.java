@@ -21,20 +21,16 @@ class ProdutoMapperTest {
     @Test
     void toResponseDTO_ShouldMapCorrectly() {
         // Given
-        Loja loja = new Loja();
-        loja.setId(10L);
-        loja.setNome("Loja Teste");
-
         Produto produto = new Produto();
         produto.setId(1L);
         produto.setNome("Hambúrguer");
         produto.setDescricao("Delicioso");
-        produto.setPreco(35.0);
-        produto.setEstoque(10);
-        produto.setCategoria("Lanches");
-        produto.setImagem("http://img.com");
+        produto.setMarca("Marca Famosa");
+        produto.setUnidadeMedida("kg");
+        produto.setPeso(1.5);
+        produto.setCodigoBarras("7891234567890");
+        produto.setImagemPrincipal("http://img.com");
         produto.setAtivo(true);
-        produto.setLoja(loja);
 
         // When
         ProdutoResponseDTO responseDTO = mapper.toResponseDTO(produto);
@@ -44,12 +40,12 @@ class ProdutoMapperTest {
         assertEquals(produto.getId(), responseDTO.getId());
         assertEquals(produto.getNome(), responseDTO.getNome());
         assertEquals(produto.getDescricao(), responseDTO.getDescricao());
-        assertEquals(produto.getPreco(), responseDTO.getPreco());
-        assertEquals(produto.getEstoque(), responseDTO.getEstoque());
-        assertEquals(produto.getCategoria(), responseDTO.getCategoria());
-        assertEquals(produto.getImagem(), responseDTO.getImagem());
+        assertEquals(produto.getMarca(), responseDTO.getMarca());
+        assertEquals(produto.getUnidadeMedida(), responseDTO.getUnidadeMedida());
+        assertEquals(produto.getPeso(), responseDTO.getPeso());
+        assertEquals(produto.getCodigoBarras(), responseDTO.getCodigoBarras());
+        assertEquals(produto.getImagemPrincipal(), responseDTO.getImagemPrincipal());
         assertEquals(produto.getAtivo(), responseDTO.getAtivo());
-        assertEquals(loja, responseDTO.getLoja());
     }
 
     @Test
@@ -58,12 +54,12 @@ class ProdutoMapperTest {
         ProdutoRequestDTO requestDTO = new ProdutoRequestDTO();
         requestDTO.setNome("Pizza");
         requestDTO.setDescricao("Calabresa");
-        requestDTO.setPreco(45.0);
-        requestDTO.setEstoque(5);
-        requestDTO.setCategoria("Pizzas");
-        requestDTO.setImagem("http://pizza.com");
+        requestDTO.setMarca("Forno");
+        requestDTO.setUnidadeMedida("un");
+        requestDTO.setPeso(0.8);
+        requestDTO.setCodigoBarras("7890000000001");
+        requestDTO.setImagemPrincipal("http://pizza.com");
         requestDTO.setAtivo(true);
-        requestDTO.setLojaId(10L);
 
         // When
         Produto produto = mapper.toEntity(requestDTO);
@@ -72,12 +68,12 @@ class ProdutoMapperTest {
         assertNotNull(produto);
         assertEquals(requestDTO.getNome(), produto.getNome());
         assertEquals(requestDTO.getDescricao(), produto.getDescricao());
-        assertEquals(requestDTO.getPreco(), produto.getPreco());
-        assertEquals(requestDTO.getEstoque(), produto.getEstoque());
-        assertEquals(requestDTO.getCategoria(), produto.getCategoria());
-        assertEquals(requestDTO.getImagem(), produto.getImagem());
+        assertEquals(requestDTO.getMarca(), produto.getMarca());
+        assertEquals(requestDTO.getUnidadeMedida(), produto.getUnidadeMedida());
+        assertEquals(requestDTO.getPeso(), produto.getPeso());
+        assertEquals(requestDTO.getCodigoBarras(), produto.getCodigoBarras());
+        assertEquals(requestDTO.getImagemPrincipal(), produto.getImagemPrincipal());
         assertEquals(requestDTO.getAtivo(), produto.getAtivo());
-        assertNull(produto.getLoja());
     }
 
     @Test
@@ -88,13 +84,13 @@ class ProdutoMapperTest {
 
         ProdutoRequestDTO requestDTO = new ProdutoRequestDTO();
         requestDTO.setNome("Novo");
-        requestDTO.setPreco(20.0);
+        requestDTO.setDescricao("Nova Desc");
 
         // When
         mapper.updateEntityFromDto(produto, requestDTO);
 
         // Then
         assertEquals(requestDTO.getNome(), produto.getNome());
-        assertEquals(requestDTO.getPreco(), produto.getPreco());
+        assertEquals(requestDTO.getDescricao(), produto.getDescricao());
     }
 }
