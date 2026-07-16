@@ -96,8 +96,12 @@ class ProdutoControllerIT extends BaseIntegrationTest {
                         .header("Authorization", token))
                 .andExpect(status().isOk());
 
-        // 6. Verificar que não existe mais (GET 404)
+        // 6. Verificar deleção lógica (GET retorna 200 e ativo=false)
         mockMvc.perform(get("/produtos/" + produtoId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    ProdutoResponseDTO deleted = objectMapper.readValue(result.getResponse().getContentAsString(), ProdutoResponseDTO.class);
+                    assertThat(deleted.getAtivo()).isFalse();
+                });
     }
 }

@@ -20,6 +20,10 @@ class LojaControllerIT extends BaseIntegrationTest {
     @Test
     @DisplayName("Deve realizar o CRUD completo de Loja")
     void deveRealizarCrudCompletoLoja() throws Exception {
+        // 0. Autenticar e Criar Lojista Profile
+        String token = criarUsuarioEObterToken("user.loja@test.com");
+        Long lojistaProfileId = criarLojistaProfile(token);
+
         // 1. Criar Loja (POST)
         LojaRequestDTO requestDTO = new LojaRequestDTO();
         requestDTO.setNome("Burger King Test");
@@ -27,23 +31,8 @@ class LojaControllerIT extends BaseIntegrationTest {
         requestDTO.setTelefone("1144445555");
         requestDTO.setTempoMedioPreparo(30);
         requestDTO.setAtiva(true);
+        requestDTO.setLojistaProfileId(lojistaProfileId);
 
-        // 0. Autenticar (Bootstrap)
-        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO();
-        usuarioDTO.setNome("User Loja");
-        usuarioDTO.setEmail("user.loja@test.com");
-        usuarioDTO.setSenha("senha123");
-        usuarioDTO.setTelefone("11999999999");
-        usuarioDTO.setRole("USER");
-        usuarioDTO.setAtivo(true);
-
-        mockMvc.perform(post("/usuarios")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(usuarioDTO)))
-                .andExpect(status().isOk());
-        String token = obterTokenAutenticacao(usuarioDTO.getEmail(), "senha123");
-
-        // 1. Criar Loja (POST) - Agora autenticado
         MvcResult resultPost = mockMvc.perform(post("/lojas")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,8 +79,12 @@ class LojaControllerIT extends BaseIntegrationTest {
                         .header("Authorization", token))
                 .andExpect(status().isOk());
 
-        // 6. Verificar que não existe mais (GET 404)
+        // 6. Verificar deleção lógica (GET retorna 200 e ativa=false)
         mockMvc.perform(get("/lojas/" + lojaId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    LojaResponseDTO deleted = objectMapper.readValue(result.getResponse().getContentAsString(), LojaResponseDTO.class);
+                    assertThat(deleted.getAtiva()).isFalse();
+                });
     }
 }

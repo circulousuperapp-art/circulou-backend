@@ -53,11 +53,11 @@ class ActuatorIT extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 ao acessar metrics sem autenticação")
-    void deveRetornar403AoAcessarMetricsSemAutenticacao() {
+    @DisplayName("Deve retornar 401 ao acessar metrics sem autenticação")
+    void deveRetornar401AoAcessarMetricsSemAutenticacao() {
         webTestClient.get().uri("/actuator/metrics")
                 .exchange()
-                .expectStatus().isForbidden();
+                .expectStatus().isUnauthorized();
     }
 
     @Test
@@ -87,12 +87,12 @@ class ActuatorIT extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 ao acessar prometheus sem autenticação")
-    void deveRetornar403AoAcessarPrometheusSemAutenticacao() {
+    @DisplayName("Deve retornar 401 ao acessar prometheus sem autenticação")
+    void deveRetornar401AoAcessarPrometheusSemAutenticacao() {
         webTestClient.get().uri("/actuator/prometheus")
                 .accept(MediaType.parseMediaType("text/plain; version=0.0.4"))
                 .exchange()
-                .expectStatus().isForbidden();
+                .expectStatus().isUnauthorized();
     }
 
     @Test

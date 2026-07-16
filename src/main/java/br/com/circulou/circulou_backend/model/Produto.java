@@ -1,8 +1,6 @@
 package br.com.circulou.circulou_backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -31,9 +29,5 @@ public class Produto {
     // A Categoria será um agregado próprio vinculado ao Produto em sprints futuras.
     private String imagemPrincipal;
     private Boolean ativo;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
-    private List<ItemPedido> itensPedido;
 
 }

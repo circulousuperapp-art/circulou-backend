@@ -2,15 +2,12 @@ package br.com.circulou.circulou_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -32,7 +29,6 @@ public class Loja {
     @Column(nullable = false, unique = true)
     private String email;
 
-
     @Column(nullable = false)
     private String telefone;
 
@@ -40,7 +36,8 @@ public class Loja {
 
     private Integer tempoMedioPreparo;
 
-    private Boolean ativa;
+    @Column(nullable = false)
+    private Boolean ativa = true;
 
     private Boolean seloConfianca;
 

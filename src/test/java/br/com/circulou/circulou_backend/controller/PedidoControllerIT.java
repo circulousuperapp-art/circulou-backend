@@ -24,29 +24,22 @@ class PedidoControllerIT extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Criar Usuário
-        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO();
-        usuarioDTO.setNome("Comprador");
-        usuarioDTO.setEmail("comprador@test.com");
-        usuarioDTO.setSenha("123456");
-        usuarioDTO.setTelefone("11988887777");
-        usuarioDTO.setRole("USER");
-        usuarioDTO.setAtivo(true);
+        // Criar Usuário e Token
+        token = criarUsuarioEObterToken("comprador@test.com");
+        usuarioId = usuarioRepositoryPort.findByEmail("comprador@test.com").get().getId();
 
-        mockMvc.perform(post("/usuarios")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(usuarioDTO)))
-                .andExpect(status().isOk());
-        
-        token = obterTokenAutenticacao(usuarioDTO.getEmail(), "123456");
-        usuarioId = usuarioRepositoryPort.findByEmail(usuarioDTO.getEmail()).get().getId();
+        // Criar Lojista Profile Dinâmico
+        Long lojistaProfileId = criarLojistaProfile(token);
 
-        // Criar Loja
+        // Criar Loja Dinâmica
         LojaRequestDTO lojaDTO = new LojaRequestDTO();
         lojaDTO.setNome("Loja Pedidos");
         lojaDTO.setEmail("loja.pedidos@test.com");
         lojaDTO.setTelefone("1133332222");
         lojaDTO.setTempoMedioPreparo(25);
+        lojaDTO.setAtiva(true);
+        lojaDTO.setLojistaProfileId(lojistaProfileId);
+        
         MvcResult resL = mockMvc.perform(post("/lojas")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -55,10 +48,14 @@ class PedidoControllerIT extends BaseIntegrationTest {
                 .andReturn();
         lojaId = objectMapper.readValue(resL.getResponse().getContentAsString(), LojaResponseDTO.class).getId();
 
-        // Criar Produto
+        // Criar Produto Dinâmico
         ProdutoRequestDTO produtoDTO = new ProdutoRequestDTO();
         produtoDTO.setNome("Produto Pedido");
         produtoDTO.setDescricao("Desc");
+        produtoDTO.setMarca("Marca");
+        produtoDTO.setUnidadeMedida("un");
+        produtoDTO.setPeso(1.0);
+        produtoDTO.setCodigoBarras("7891234567890");
         produtoDTO.setAtivo(true);
         MvcResult resP = mockMvc.perform(post("/produtos")
                         .header("Authorization", token)
@@ -68,12 +65,13 @@ class PedidoControllerIT extends BaseIntegrationTest {
                 .andReturn();
         Long produtoId = objectMapper.readValue(resP.getResponse().getContentAsString(), ProdutoResponseDTO.class).getId();
 
-        // Criar Oferta
+        // Criar Oferta Dinâmica
         OfertaRequestDTO ofertaDTO = new OfertaRequestDTO();
         ofertaDTO.setLojaId(lojaId);
         ofertaDTO.setProdutoId(produtoId);
         ofertaDTO.setPreco(new BigDecimal("75.00"));
         ofertaDTO.setEstoque(100);
+        ofertaDTO.setEstoqueMinimo(10);
         ofertaDTO.setAtivo(true);
         ofertaDTO.setDisponivel(true);
         MvcResult resO = mockMvc.perform(post("/ofertas")
@@ -134,16 +132,16 @@ class PedidoControllerIT extends BaseIntegrationTest {
                         .header("Authorization", token))
                 .andExpect(status().isOk());
 
-        // 5. Verificar que não existe mais (GET 404)
+        // 5. Verificar que não existe mais (GET 404) - Pedido ainda usa deleção física por enquanto
         mockMvc.perform(get("/pedidos/" + pedidoId)
                         .header("Authorization", token))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Deve retornar 403 ao tentar acessar pedidos sem autenticação")
-    void deveRetornar403SemAutenticacao() throws Exception {
+    @DisplayName("Deve retornar 401 ao tentar acessar pedidos sem autenticação")
+    void deveRetornar401SemAutenticacao() throws Exception {
         mockMvc.perform(get("/pedidos"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 }

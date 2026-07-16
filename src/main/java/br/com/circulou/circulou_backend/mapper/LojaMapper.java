@@ -29,12 +29,19 @@ public class LojaMapper {
     }
 
     public void updateEntityFromDto(Loja loja, LojaRequestDTO dto) {
+
         loja.setNome(dto.getNome());
         loja.setEmail(dto.getEmail());
         loja.setTelefone(dto.getTelefone());
         loja.setLogo(dto.getLogo());
         loja.setTempoMedioPreparo(dto.getTempoMedioPreparo());
-        loja.setAtiva(dto.getAtiva());
+
+        if (dto.getAtiva() != null) {
+            loja.setAtiva(dto.getAtiva());
+        } else {
+            loja.setAtiva(true);
+        }
+
         loja.setSeloConfianca(dto.getSeloConfianca());
         loja.setEndereco(dto.getEndereco());
     }

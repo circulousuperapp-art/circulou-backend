@@ -23,29 +23,22 @@ class ItemPedidoControllerIT extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        // Criar Usuário
-        UsuarioRequestDTO usuarioDTO = new UsuarioRequestDTO();
-        usuarioDTO.setNome("User Test");
-        usuarioDTO.setEmail("user.test@test.com");
-        usuarioDTO.setSenha("123456");
-        usuarioDTO.setTelefone("11999998888");
-        usuarioDTO.setRole("USER");
-        usuarioDTO.setAtivo(true);
+        // Criar Usuário e Token
+        token = criarUsuarioEObterToken("user.test@test.com");
+        Long usuarioId = usuarioRepositoryPort.findByEmail("user.test@test.com").get().getId();
 
-        mockMvc.perform(post("/usuarios")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(usuarioDTO)))
-                .andExpect(status().isOk());
-        
-        token = obterTokenAutenticacao(usuarioDTO.getEmail(), "123456");
-        Long usuarioId = usuarioRepositoryPort.findByEmail(usuarioDTO.getEmail()).get().getId();
+        // Criar Lojista Profile Dinâmico
+        Long lojistaProfileId = criarLojistaProfile(token);
 
-        // Criar Loja
+        // Criar Loja Dinâmica
         LojaRequestDTO lojaDTO = new LojaRequestDTO();
         lojaDTO.setNome("Loja Itens");
         lojaDTO.setEmail("loja.itens@test.com");
         lojaDTO.setTelefone("1133331111");
         lojaDTO.setTempoMedioPreparo(15);
+        lojaDTO.setAtiva(true);
+        lojaDTO.setLojistaProfileId(lojistaProfileId);
+        
         MvcResult resL = mockMvc.perform(post("/lojas")
                         .header("Authorization", token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -54,10 +47,14 @@ class ItemPedidoControllerIT extends BaseIntegrationTest {
                 .andReturn();
         Long lojaId = objectMapper.readValue(resL.getResponse().getContentAsString(), LojaResponseDTO.class).getId();
 
-        // Criar Produto
+        // Criar Produto Dinâmico
         ProdutoRequestDTO produtoDTO = new ProdutoRequestDTO();
         produtoDTO.setNome("Produto Teste");
         produtoDTO.setDescricao("Desc");
+        produtoDTO.setMarca("Marca");
+        produtoDTO.setUnidadeMedida("un");
+        produtoDTO.setPeso(1.0);
+        produtoDTO.setCodigoBarras("7891234567891");
         produtoDTO.setAtivo(true);
         MvcResult resP = mockMvc.perform(post("/produtos")
                         .header("Authorization", token)
@@ -67,12 +64,13 @@ class ItemPedidoControllerIT extends BaseIntegrationTest {
                 .andReturn();
         Long produtoId = objectMapper.readValue(resP.getResponse().getContentAsString(), ProdutoResponseDTO.class).getId();
 
-        // Criar Oferta
+        // Criar Oferta Dinâmica
         OfertaRequestDTO ofertaDTO = new OfertaRequestDTO();
         ofertaDTO.setLojaId(lojaId);
         ofertaDTO.setProdutoId(produtoId);
         ofertaDTO.setPreco(new BigDecimal("50.00"));
         ofertaDTO.setEstoque(100);
+        ofertaDTO.setEstoqueMinimo(10);
         ofertaDTO.setAtivo(true);
         ofertaDTO.setDisponivel(true);
         MvcResult resO = mockMvc.perform(post("/ofertas")
@@ -83,13 +81,10 @@ class ItemPedidoControllerIT extends BaseIntegrationTest {
                 .andReturn();
         ofertaId = objectMapper.readValue(resO.getResponse().getContentAsString(), OfertaResponseDTO.class).getId();
 
-        // Criar Pedido Vazio
+        // Criar Pedido Vazio (com um item inicial)
         PedidoRequestDTO pedidoDTO = new PedidoRequestDTO();
         pedidoDTO.setUsuarioId(usuarioId);
         pedidoDTO.setLojaId(lojaId);
-        // Em um cenário real o pedido precisa de itens no Service.salvar, 
-        // mas aqui testamos a criação do item individualmente via controller
-        // Vamos criar o pedido via controller COM um item inicial para ele existir
         ItemPedidoSimplesDTO itemPed = new ItemPedidoSimplesDTO(1, ofertaId);
         pedidoDTO.setItens(List.of(itemPed));
 
