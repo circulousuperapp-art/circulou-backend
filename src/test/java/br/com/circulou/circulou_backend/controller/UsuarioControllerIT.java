@@ -79,8 +79,8 @@ class UsuarioControllerIT extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 403 ao tentar acessar com token de usuário excluído")
-    void deveRetornar403AoAcessarComTokenDeUsuarioExcluido() throws Exception {
+    @DisplayName("Deve retornar 401 ao tentar acessar com token de usuário excluído")
+    void deveRetornar401AoAcessarComTokenDeUsuarioExcluido() throws Exception {
         // 1. Criar Usuário
         UsuarioRequestDTO requestDTO = new UsuarioRequestDTO();
         requestDTO.setNome("Usuario Temporario");
@@ -106,10 +106,10 @@ class UsuarioControllerIT extends BaseIntegrationTest {
                         .header("Authorization", token))
                 .andExpect(status().isOk());
 
-        // 4. Tentar acessar recurso protegido com o mesmo token (deve ser 403 Forbidden)
+        // 4. Tentar acessar recurso protegido com o mesmo token (deve ser 401 Unauthorized)
         mockMvc.perform(get("/usuarios/" + usuarioId)
                         .header("Authorization", token))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
