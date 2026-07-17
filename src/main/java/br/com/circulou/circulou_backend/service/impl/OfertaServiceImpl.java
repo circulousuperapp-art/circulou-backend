@@ -75,6 +75,24 @@ public class OfertaServiceImpl implements OfertaService {
         repositoryPort.save(oferta);
     }
 
+    @Override
+    @Transactional
+    public void registrarVenda(Long ofertaId, Integer quantidade) {
+        Oferta oferta = buscarPorId(ofertaId);
+        
+        if (oferta.getEstoque() < quantidade) {
+            throw new BusinessException("Estoque insuficiente para a oferta do produto " + oferta.getProduto().getNome());
+        }
+
+        oferta.setEstoque(oferta.getEstoque() - quantidade);
+        
+        if (oferta.getEstoque() == 0) {
+            oferta.setDisponivel(false);
+        }
+        
+        repositoryPort.save(oferta);
+    }
+
     private void validarRegrasDeNegocio(Oferta oferta) {
         if (oferta.getPreco() == null || oferta.getPreco().compareTo(BigDecimal.ZERO) <= 0) {
             throw new BusinessException("Preço deve ser obrigatório e maior que zero");

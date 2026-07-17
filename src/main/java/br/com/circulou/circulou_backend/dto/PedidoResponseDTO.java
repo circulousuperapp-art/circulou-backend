@@ -1,5 +1,6 @@
 package br.com.circulou.circulou_backend.dto;
 
+import br.com.circulou.circulou_backend.model.PedidoStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,7 +25,7 @@ public class PedidoResponseDTO {
     private BigDecimal valorTotal;
 
     @Schema(description = "Status atual", example = "PENDENTE")
-    private String status;
+    private PedidoStatus status;
 
     @Schema(description = "Data e hora da criação")
     private LocalDateTime dataCriacao;

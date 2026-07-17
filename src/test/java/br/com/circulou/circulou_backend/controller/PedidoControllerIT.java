@@ -2,6 +2,7 @@ package br.com.circulou.circulou_backend.controller;
 
 import br.com.circulou.circulou_backend.integration.BaseIntegrationTest;
 import br.com.circulou.circulou_backend.dto.*;
+import br.com.circulou.circulou_backend.model.PedidoStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -107,7 +108,7 @@ class PedidoControllerIT extends BaseIntegrationTest {
         assertThat(responseDTO.getId()).isNotNull();
         // 75.00 * 2 = 150.00
         assertThat(responseDTO.getValorTotal()).isEqualByComparingTo(new BigDecimal("150.00"));
-        assertThat(responseDTO.getStatus()).isEqualTo("PENDENTE");
+        assertThat(responseDTO.getStatus()).isEqualTo(PedidoStatus.PENDENTE);
         assertThat(responseDTO.getItens()).hasSize(1);
         assertThat(responseDTO.getItens().get(0).getNomeProduto()).isEqualTo("Produto Pedido");
 

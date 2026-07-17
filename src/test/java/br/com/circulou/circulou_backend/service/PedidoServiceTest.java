@@ -3,6 +3,7 @@ package br.com.circulou.circulou_backend.service;
 import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.*;
+import br.com.circulou.circulou_backend.model.PedidoStatus;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.impl.PedidoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,7 +103,7 @@ class PedidoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve salvar pedido com sucesso e decrementar estoque")
+    @DisplayName("Deve salvar pedido com sucesso e registrar venda na oferta")
     void deveSalvarPedidoComSucesso() {
         when(pedidoRepositoryPort.save(any(Pedido.class))).thenReturn(pedido);
 
@@ -110,8 +111,8 @@ class PedidoServiceTest {
 
         assertNotNull(resultado);
         assertEquals(new BigDecimal("200.00"), resultado.getValorTotal());
-        assertEquals(8, oferta.getEstoque()); // 10 - 2
-        verify(ofertaService, times(1)).atualizar(eq(1L), any(Oferta.class));
+        assertEquals(PedidoStatus.PENDENTE, resultado.getStatus());
+        verify(ofertaService, times(1)).registrarVenda(eq(1L), eq(2));
         verify(pedidoRepositoryPort, times(1)).save(any(Pedido.class));
     }
 

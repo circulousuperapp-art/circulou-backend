@@ -27,8 +27,9 @@ public class Pedido {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotal = BigDecimal.ZERO;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private PedidoStatus status;
 
     @Column(nullable = false)
     private LocalDateTime dataCriacao;

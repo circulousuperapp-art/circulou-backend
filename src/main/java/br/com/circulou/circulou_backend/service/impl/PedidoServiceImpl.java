@@ -5,6 +5,7 @@ import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.ItemPedido;
 import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.model.Pedido;
+import br.com.circulou.circulou_backend.model.PedidoStatus;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
@@ -40,7 +41,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     public Pedido salvar(Pedido pedido) {
         pedido.setDataCriacao(LocalDateTime.now());
-        pedido.setStatus("PENDENTE");
+        pedido.setStatus(PedidoStatus.PENDENTE);
 
         validarPedido(pedido);
         
@@ -90,12 +91,7 @@ public class PedidoServiceImpl implements PedidoService {
 
     private void processarEstoque(Pedido pedido) {
         for (ItemPedido item : pedido.getItens()) {
-            Oferta oferta = item.getOferta();
-            oferta.setEstoque(oferta.getEstoque() - item.getQuantidade());
-            
-            // Se o estoque chegar a zero, podemos marcar como indisponível automaticamente?
-            // Por enquanto apenas decrementamos conforme solicitado.
-            ofertaService.atualizar(oferta.getId(), oferta);
+            ofertaService.registrarVenda(item.getOferta().getId(), item.getQuantidade());
         }
     }
 
