@@ -41,7 +41,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     public Pedido salvar(Pedido pedido) {
         pedido.setDataCriacao(LocalDateTime.now());
-        pedido.setStatus(PedidoStatus.PENDENTE);
+        pedido.setStatus(PedidoStatus.AGUARDANDO_LIBERACAO);
 
         validarPedido(pedido);
         
@@ -65,27 +65,11 @@ public class PedidoServiceImpl implements PedidoService {
         }
 
         for (ItemPedido item : pedido.getItens()) {
-            Oferta oferta = item.getOferta();
-            
-            if (oferta == null) {
-                throw new BusinessException("Oferta não encontrada para um dos itens");
-            }
-
-            if (!Boolean.TRUE.equals(oferta.getAtivo()) || !Boolean.TRUE.equals(oferta.getDisponivel())) {
-                throw new BusinessException("A oferta do produto " + item.getNomeProduto() + " não está disponível");
-            }
-
-            if (!Boolean.TRUE.equals(oferta.getProduto().getAtivo())) {
-                throw new BusinessException("O produto " + item.getNomeProduto() + " está inativo");
-            }
-
-            if (!oferta.getLoja().getId().equals(pedido.getLoja().getId())) {
-                throw new BusinessException("A oferta " + item.getNomeProduto() + " não pertence à loja do pedido");
-            }
-
-            if (oferta.getEstoque() < item.getQuantidade()) {
-                throw new BusinessException("Estoque insuficiente para o produto " + item.getNomeProduto());
-            }
+            ofertaService.validarParaVenda(
+                    item.getOferta().getId(),
+                    pedido.getLoja().getId(),
+                    item.getQuantidade()
+            );
         }
     }
 

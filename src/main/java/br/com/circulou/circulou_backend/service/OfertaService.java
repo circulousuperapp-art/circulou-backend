@@ -12,4 +12,5 @@ public interface OfertaService {
     Oferta atualizar(Long id, Oferta oferta);
     void deletar(Long id);
     void registrarVenda(Long ofertaId, Integer quantidade);
+    void validarParaVenda(Long ofertaId, Long lojaId, Integer quantidade);
 }

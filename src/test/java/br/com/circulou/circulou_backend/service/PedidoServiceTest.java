@@ -111,7 +111,8 @@ class PedidoServiceTest {
 
         assertNotNull(resultado);
         assertEquals(new BigDecimal("200.00"), resultado.getValorTotal());
-        assertEquals(PedidoStatus.PENDENTE, resultado.getStatus());
+        assertEquals(PedidoStatus.AGUARDANDO_LIBERACAO, resultado.getStatus());
+        verify(ofertaService, times(1)).validarParaVenda(eq(1L), eq(1L), eq(2));
         verify(ofertaService, times(1)).registrarVenda(eq(1L), eq(2));
         verify(pedidoRepositoryPort, times(1)).save(any(Pedido.class));
     }
@@ -125,9 +126,10 @@ class PedidoServiceTest {
     }
 
     @Test
-    @DisplayName("Deve lançar BusinessException quando estoque é insuficiente")
-    void deveLancarExcecaoEstoqueInsuficiente() {
-        pedido.getItens().get(0).setQuantidade(11);
+    @DisplayName("Deve lançar BusinessException quando a validação da oferta falha")
+    void deveLancarExcecaoQuandoValidacaoOfertaFalha() {
+        doThrow(new BusinessException("Erro na oferta"))
+                .when(ofertaService).validarParaVenda(anyLong(), anyLong(), anyInt());
 
         assertThrows(BusinessException.class, () -> pedidoService.salvar(pedido));
     }

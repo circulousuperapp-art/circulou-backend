@@ -108,7 +108,7 @@ class PedidoControllerIT extends BaseIntegrationTest {
         assertThat(responseDTO.getId()).isNotNull();
         // 75.00 * 2 = 150.00
         assertThat(responseDTO.getValorTotal()).isEqualByComparingTo(new BigDecimal("150.00"));
-        assertThat(responseDTO.getStatus()).isEqualTo(PedidoStatus.PENDENTE);
+        assertThat(responseDTO.getStatus()).isEqualTo(PedidoStatus.AGUARDANDO_LIBERACAO);
         assertThat(responseDTO.getItens()).hasSize(1);
         assertThat(responseDTO.getItens().get(0).getNomeProduto()).isEqualTo("Produto Pedido");
 

@@ -78,11 +78,8 @@ public class OfertaServiceImpl implements OfertaService {
     @Override
     @Transactional
     public void registrarVenda(Long ofertaId, Integer quantidade) {
+        validarParaVenda(ofertaId, null, quantidade);
         Oferta oferta = buscarPorId(ofertaId);
-        
-        if (oferta.getEstoque() < quantidade) {
-            throw new BusinessException("Estoque insuficiente para a oferta do produto " + oferta.getProduto().getNome());
-        }
 
         oferta.setEstoque(oferta.getEstoque() - quantidade);
         
@@ -91,6 +88,27 @@ public class OfertaServiceImpl implements OfertaService {
         }
         
         repositoryPort.save(oferta);
+    }
+
+    @Override
+    public void validarParaVenda(Long ofertaId, Long lojaId, Integer quantidade) {
+        Oferta oferta = buscarPorId(ofertaId);
+
+        if (!Boolean.TRUE.equals(oferta.getAtivo()) || !Boolean.TRUE.equals(oferta.getDisponivel())) {
+            throw new BusinessException("A oferta do produto " + oferta.getProduto().getNome() + " não está disponível");
+        }
+
+        if (!Boolean.TRUE.equals(oferta.getProduto().getAtivo())) {
+            throw new BusinessException("O produto " + oferta.getProduto().getNome() + " está inativo");
+        }
+
+        if (lojaId != null && !oferta.getLoja().getId().equals(lojaId)) {
+            throw new BusinessException("A oferta " + oferta.getProduto().getNome() + " não pertence à loja do pedido");
+        }
+
+        if (oferta.getEstoque() < quantidade) {
+            throw new BusinessException("Estoque insuficiente para o produto " + oferta.getProduto().getNome());
+        }
     }
 
     private void validarRegrasDeNegocio(Oferta oferta) {
