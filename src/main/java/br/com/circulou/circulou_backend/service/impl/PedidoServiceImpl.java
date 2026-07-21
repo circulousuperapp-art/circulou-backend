@@ -128,6 +128,15 @@ public class PedidoServiceImpl implements PedidoService {
         eventPublisher.publish(pedido.pullDomainEvents());
     }
 
+    @Override
+    @Transactional
+    public void cancelar(Long id) {
+        Pedido pedido = buscarEntidadePorId(id);
+        pedido.cancelar(statusPolicy);
+        pedidoRepositoryPort.save(pedido);
+        eventPublisher.publish(pedido.pullDomainEvents());
+    }
+
     private Pedido buscarEntidadePorId(Long id) {
         return pedidoRepositoryPort.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));

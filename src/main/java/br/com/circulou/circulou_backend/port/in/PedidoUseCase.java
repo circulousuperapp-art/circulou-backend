@@ -10,4 +10,5 @@ public interface PedidoUseCase {
     PedidoResponseDTO salvar(PedidoRequestDTO dto);
     PedidoResponseDTO atualizar(Long id, PedidoRequestDTO dto);
     void deletar(Long id);
+    void cancelar(Long id);
 }

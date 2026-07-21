@@ -66,6 +66,20 @@ public class Pedido {
         registrarEventoDeStatus(novoStatus);
     }
 
+    public void cancelar(PedidoStatusPolicy policy) {
+        if (!isCancelamentoPermitido()) {
+            throw new BusinessException("O prazo de cancelamento para este pedido expirou ou o status não permite cancelamento");
+        }
+        transitarPara(PedidoStatus.CANCELADO, policy);
+    }
+
+    public boolean isCancelamentoPermitido() {
+        if (this.dataLimiteCancelamento == null) {
+            return false;
+        }
+        return LocalDateTime.now().isBefore(this.dataLimiteCancelamento);
+    }
+
     private void registrarEventoDeStatus(PedidoStatus novoStatus) {
         Object event = switch (novoStatus) {
             case AGUARDANDO_LIBERACAO -> new PedidoCriadoEvent(this.id);

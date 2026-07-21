@@ -86,6 +86,23 @@ public class PedidoController {
         pedidoUseCase.deletar(id);
     }
 
+    @PatchMapping("/{id}/cancelar")
+    @Operation(summary = "Cancelar um pedido", description = "Cancela um pedido caso esteja dentro do prazo permitido")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Pedido cancelado com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Prazo expirado ou status não permite cancelamento",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+        @ApiResponse(responseCode = "401", description = "Não autenticado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+        @ApiResponse(responseCode = "404", description = "Pedido não encontrado",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Erro interno do servidor",
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
+    })
+    public void cancelarPedido(@PathVariable Long id) {
+        pedidoUseCase.cancelar(id);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "Atualizar um pedido", description = "Atualiza o status ou dados de um pedido existente")
     @ApiResponses(value = {

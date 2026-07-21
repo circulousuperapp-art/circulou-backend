@@ -92,6 +92,11 @@ public class PedidoFacadeImpl implements PedidoUseCase {
         pedidoService.deletar(id);
     }
 
+    @Override
+    public void cancelar(Long id) {
+        pedidoService.cancelar(id);
+    }
+
     private void vincularRelacionamentos(Pedido pedido, Long usuarioId, Long lojaId) {
         if (usuarioId != null) {
             Usuario usuario = usuarioService.buscarPorId(usuarioId);

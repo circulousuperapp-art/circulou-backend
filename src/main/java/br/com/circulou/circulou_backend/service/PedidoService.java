@@ -12,4 +12,5 @@ public interface PedidoService {
     Pedido atualizar(Long id, Pedido pedido);
     void deletar(Long id);
     void alterarStatus(Long id, PedidoStatus novoStatus);
+    void cancelar(Long id);
 }
