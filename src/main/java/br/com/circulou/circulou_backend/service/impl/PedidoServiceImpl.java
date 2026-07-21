@@ -6,12 +6,16 @@ import br.com.circulou.circulou_backend.model.ItemPedido;
 import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.model.Pedido;
 import br.com.circulou.circulou_backend.model.PedidoStatus;
+import br.com.circulou.circulou_backend.model.PedidoStatusPolicy;
+import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,10 +25,20 @@ public class PedidoServiceImpl implements PedidoService {
 
     private final PedidoRepositoryPort pedidoRepositoryPort;
     private final OfertaService ofertaService;
+    private final PedidoStatusPolicy statusPolicy;
+    private final EventPublisherPort eventPublisher;
 
-    public PedidoServiceImpl(PedidoRepositoryPort pedidoRepositoryPort, OfertaService ofertaService) {
+    @Value("${circulou.pedido.janela-cancelamento-minutos:1}")
+    private Integer janelaCancelamentoMinutos;
+
+    public PedidoServiceImpl(PedidoRepositoryPort pedidoRepositoryPort, 
+                             OfertaService ofertaService,
+                             PedidoStatusPolicy statusPolicy,
+                             EventPublisherPort eventPublisher) {
         this.pedidoRepositoryPort = pedidoRepositoryPort;
         this.ofertaService = ofertaService;
+        this.statusPolicy = statusPolicy;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -41,7 +55,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Transactional
     public Pedido salvar(Pedido pedido) {
         pedido.setDataCriacao(LocalDateTime.now());
-        pedido.setStatus(PedidoStatus.AGUARDANDO_LIBERACAO);
+        pedido.setDataLimiteCancelamento(LocalDateTime.now().plus(Duration.ofMinutes(janelaCancelamentoMinutos)));
 
         validarPedido(pedido);
         
@@ -52,7 +66,16 @@ public class PedidoServiceImpl implements PedidoService {
         // Processar estoque
         processarEstoque(pedido);
 
-        return pedidoRepositoryPort.save(pedido);
+        // Salva primeiro para garantir a geração do ID antes de transitar o status e gerar eventos
+        Pedido pedidoSalvo = pedidoRepositoryPort.save(pedido);
+
+        // Transição para o status inicial (gera PedidoCriadoEvent com o ID agora presente)
+        pedidoSalvo.transitarPara(PedidoStatus.AGUARDANDO_LIBERACAO, statusPolicy);
+
+        // Publicar eventos capturados
+        eventPublisher.publish(pedidoSalvo.pullDomainEvents());
+
+        return pedidoSalvo;
     }
 
     private void validarPedido(Pedido pedido) {
@@ -94,6 +117,15 @@ public class PedidoServiceImpl implements PedidoService {
             throw new ResourceNotFoundException("Pedido não encontrado");
         }
         pedidoRepositoryPort.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void alterarStatus(Long id, PedidoStatus novoStatus) {
+        Pedido pedido = buscarEntidadePorId(id);
+        pedido.transitarPara(novoStatus, statusPolicy);
+        pedidoRepositoryPort.save(pedido);
+        eventPublisher.publish(pedido.pullDomainEvents());
     }
 
     private Pedido buscarEntidadePorId(Long id) {

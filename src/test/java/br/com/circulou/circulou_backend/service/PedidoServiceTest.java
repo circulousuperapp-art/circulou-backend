@@ -4,15 +4,16 @@ import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.model.PedidoStatus;
+import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.impl.PedidoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -32,7 +33,11 @@ class PedidoServiceTest {
     @Mock
     private OfertaService ofertaService;
 
-    @InjectMocks
+    @Mock
+    private EventPublisherPort eventPublisher;
+
+    private final PedidoStatusPolicy statusPolicy = new PedidoStatusPolicy();
+
     private PedidoServiceImpl pedidoService;
 
     private Pedido pedido;
@@ -43,6 +48,9 @@ class PedidoServiceTest {
 
     @BeforeEach
     void setUp() {
+        pedidoService = new PedidoServiceImpl(pedidoRepositoryPort, ofertaService, statusPolicy, eventPublisher);
+        ReflectionTestUtils.setField(pedidoService, "janelaCancelamentoMinutos", 1);
+
         usuario = new Usuario();
         usuario.setId(1L);
 
@@ -112,9 +120,25 @@ class PedidoServiceTest {
         assertNotNull(resultado);
         assertEquals(new BigDecimal("200.00"), resultado.getValorTotal());
         assertEquals(PedidoStatus.AGUARDANDO_LIBERACAO, resultado.getStatus());
+        assertNotNull(resultado.getDataLimiteCancelamento());
+
         verify(ofertaService, times(1)).validarParaVenda(eq(1L), eq(1L), eq(2));
         verify(ofertaService, times(1)).registrarVenda(eq(1L), eq(2));
         verify(pedidoRepositoryPort, times(1)).save(any(Pedido.class));
+        verify(eventPublisher, times(1)).publish(anyList());
+    }
+
+    @Test
+    @DisplayName("Deve alterar status do pedido com sucesso")
+    void deveAlterarStatusComSucesso() {
+        when(pedidoRepositoryPort.findById(1L)).thenReturn(Optional.of(pedido));
+        pedido.setStatus(PedidoStatus.AGUARDANDO_LIBERACAO);
+
+        pedidoService.alterarStatus(1L, PedidoStatus.EM_PREPARO);
+
+        assertEquals(PedidoStatus.EM_PREPARO, pedido.getStatus());
+        verify(pedidoRepositoryPort, times(1)).save(pedido);
+        verify(eventPublisher, times(1)).publish(anyList());
     }
 
     @Test
