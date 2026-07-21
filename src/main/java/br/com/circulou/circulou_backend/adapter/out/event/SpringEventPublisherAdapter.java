@@ -3,12 +3,12 @@ package br.com.circulou.circulou_backend.adapter.out.event;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 @Component
-@Primary
+@ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "spring", matchIfMissing = true)
 public class SpringEventPublisherAdapter implements EventPublisherPort {
 
     private static final Logger logger = LoggerFactory.getLogger(SpringEventPublisherAdapter.class);
