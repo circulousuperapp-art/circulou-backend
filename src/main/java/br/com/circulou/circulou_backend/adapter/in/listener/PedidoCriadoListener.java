@@ -6,9 +6,10 @@ import br.com.circulou.circulou_backend.port.out.PedidoTimerPort;
 import br.com.circulou.circulou_backend.service.PedidoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 @Component
 public class PedidoCriadoListener {
@@ -23,7 +24,7 @@ public class PedidoCriadoListener {
     }
 
     @Async
-    @EventListener
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(PedidoCriadoEvent event) {
         logger.info("[DOMAIN EVENT] PedidoCriadoEvent recebido. PedidoId: {}", event.pedidoId());
 
