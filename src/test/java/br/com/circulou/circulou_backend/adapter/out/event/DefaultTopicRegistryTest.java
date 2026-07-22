@@ -11,7 +11,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DefaultTopicRegistryTest {
 
-    private final DefaultTopicRegistryAdapter topicRegistry = new DefaultTopicRegistryAdapter();
+    private final EventCatalog eventCatalog = new EventCatalog();
+    private final DefaultTopicRegistryAdapter topicRegistry = new DefaultTopicRegistryAdapter(eventCatalog);
 
     @Test
     void deveResolverTopicoParaPedidoCriado() {

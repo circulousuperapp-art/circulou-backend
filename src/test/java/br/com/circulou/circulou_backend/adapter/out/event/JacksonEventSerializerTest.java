@@ -13,12 +13,14 @@ class JacksonEventSerializerTest {
 
     private JacksonEventSerializerAdapter serializer;
     private ObjectMapper objectMapper;
+    private EventCatalog eventCatalog;
 
     @BeforeEach
     void setUp() {
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        serializer = new JacksonEventSerializerAdapter(objectMapper);
+        eventCatalog = new EventCatalog();
+        serializer = new JacksonEventSerializerAdapter(objectMapper, eventCatalog);
     }
 
     @Test

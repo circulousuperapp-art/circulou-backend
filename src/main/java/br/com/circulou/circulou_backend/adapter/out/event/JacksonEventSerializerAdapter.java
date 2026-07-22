@@ -18,9 +18,11 @@ public class JacksonEventSerializerAdapter implements EventSerializerPort {
 
     private static final Logger logger = LoggerFactory.getLogger(JacksonEventSerializerAdapter.class);
     private final ObjectMapper objectMapper;
+    private final EventCatalog eventCatalog;
 
-    public JacksonEventSerializerAdapter(ObjectMapper objectMapper) {
+    public JacksonEventSerializerAdapter(ObjectMapper objectMapper, EventCatalog eventCatalog) {
         this.objectMapper = objectMapper;
+        this.eventCatalog = eventCatalog;
     }
 
     @Override
@@ -30,10 +32,14 @@ public class JacksonEventSerializerAdapter implements EventSerializerPort {
             correlationId = UUID.randomUUID().toString();
         }
 
+        int version = eventCatalog.getInfo(event.getClass())
+                .map(EventCatalog.EventInfo::version)
+                .orElse(1);
+
         EventMetadata metadata = new EventMetadata(
             UUID.randomUUID().toString(),
             event.getClass().getSimpleName(),
-            1,
+            version,
             LocalDateTime.now(),
             correlationId,
             "circulou-backend"
