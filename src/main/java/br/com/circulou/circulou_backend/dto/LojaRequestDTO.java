@@ -16,19 +16,23 @@ import lombok.Setter;
 public class LojaRequestDTO {
 
     @NotBlank
+    @Size(max = 255)
     @Schema(description = "Nome fantasia da loja", example = "Burger House")
     private String nome;
 
     @NotBlank
     @Email
+    @Size(max = 255)
     @Schema(description = "E-mail de contato e login", example = "contato@burgerhouse.com")
     private String email;
 
 
     @NotBlank
+    @Size(max = 20)
     @Schema(description = "Telefone comercial", example = "1144445555")
     private String telefone;
 
+    @Size(max = 255)
     @Schema(description = "URL do logotipo", example = "http://imagem.com/logo.jpg")
     private String logo;
 

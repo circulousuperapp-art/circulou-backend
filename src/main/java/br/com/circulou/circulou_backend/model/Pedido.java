@@ -3,6 +3,7 @@ package br.com.circulou.circulou_backend.model;
 import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.model.event.*;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
+@Table(name = "pedido")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -22,23 +24,28 @@ public class Pedido {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @NotNull
+    @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotal = BigDecimal.ZERO;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PedidoStatus status = PedidoStatus.PENDENTE;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column(name = "data_criacao", nullable = false)
     private LocalDateTime dataCriacao;
 
-    @Column
+    @Column(name = "data_limite_cancelamento")
     private LocalDateTime dataLimiteCancelamento;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "loja_id", nullable = false)
     private Loja loja;

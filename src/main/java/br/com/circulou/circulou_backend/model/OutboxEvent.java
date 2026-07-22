@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "outbox_event", indexes = {
-    @Index(name = "idx_outbox_polling", columnList = "status, nextAttemptAt, createdAt, id")
+    @Index(name = "idx_outbox_polling", columnList = "status, next_attempt_at, created_at, id")
 })
 @Getter
 @Setter
@@ -19,13 +19,13 @@ public class OutboxEvent {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "aggregate_id", nullable = false)
     private String aggregateId;
 
-    @Column(nullable = false)
+    @Column(name = "aggregate_type", nullable = false)
     private String aggregateType;
 
-    @Column(nullable = false)
+    @Column(name = "event_type", nullable = false)
     private String eventType;
 
     @Column(nullable = false)
@@ -34,7 +34,7 @@ public class OutboxEvent {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String payload;
 
-    @Column
+    @Column(name = "correlation_id")
     private String correlationId;
 
     @Enumerated(EnumType.STRING)
@@ -42,22 +42,22 @@ public class OutboxEvent {
     private OutboxStatus status;
 
     @Builder.Default
-    @Column(nullable = false)
+    @Column(name = "attempt_count", nullable = false)
     private Integer attemptCount = 0;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "last_error", columnDefinition = "TEXT")
     private String lastError;
 
     @Builder.Default
     @Column(nullable = false)
     private Integer version = 1;
 
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "processed_at")
     private LocalDateTime processedAt;
 
-    @Column
+    @Column(name = "next_attempt_at")
     private LocalDateTime nextAttemptAt;
 }

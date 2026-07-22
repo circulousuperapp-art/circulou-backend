@@ -1,9 +1,7 @@
 package br.com.circulou.circulou_backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
+@Table(name = "endereco")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,17 +20,31 @@ public class Endereco {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String cep;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String logradouro;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String numero;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String complemento;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String bairro;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String cidade;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String estado;
 }

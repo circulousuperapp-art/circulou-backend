@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,41 +28,52 @@ public class Oferta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "loja_id", nullable = false)
     private Loja loja;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "produto_id", nullable = false)
     private Produto produto;
 
+    @NotNull
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal preco;
 
+    @NotNull
     @Column(nullable = false)
     private Integer estoque;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column(name = "estoque_minimo", nullable = false)
     private Integer estoqueMinimo;
 
+    @NotNull
     @Column(nullable = false)
     private Boolean ativo = true;
 
+    @NotNull
     @Column(nullable = false)
     private Boolean disponivel = true;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column(name = "permite_retirada", nullable = false)
     private Boolean permiteRetirada = false;
 
-    @Column(nullable = false)
+    @NotNull
+    @Column(name = "permite_entrega", nullable = false)
     private Boolean permiteEntrega = true;
 
+    @NotNull
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name = "data_criacao", nullable = false, updatable = false)
     private LocalDateTime dataCriacao;
 
+    @NotNull
     @LastModifiedDate
-    @Column(nullable = false)
+    @Column(name = "data_atualizacao", nullable = false)
     private LocalDateTime dataAtualizacao;
 
     // Campos preparados para evolução futura (Promoções, etc)

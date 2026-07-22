@@ -2,6 +2,10 @@ package br.com.circulou.circulou_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 import lombok.Getter;
@@ -23,22 +27,34 @@ public class Loja {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 255)
     @Column(nullable = false, length = 255)
     private String nome;
 
+    @NotBlank
+    @Email
+    @Size(max = 255)
     @Column(nullable = false, length = 255)
     private String email;
 
+    @NotBlank
+    @Size(max = 20)
     @Column(nullable = false, length = 20)
     private String telefone;
 
+    @Size(max = 255)
+    @Column(length = 255)
     private String logo;
 
+    @Column(name = "tempo_medio_preparo")
     private Integer tempoMedioPreparo;
 
+    @NotNull
     @Column(nullable = false)
     private Boolean ativa = true;
 
+    @Column(name = "selo_confianca")
     private Boolean seloConfianca;
 
     @OneToOne(cascade = CascadeType.ALL)

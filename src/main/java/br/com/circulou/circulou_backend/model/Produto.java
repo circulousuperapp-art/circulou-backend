@@ -1,6 +1,8 @@
 package br.com.circulou.circulou_backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 @Entity
+@Table(name = "produto")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,26 +21,35 @@ public class Produto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank
+    @Size(max = 255)
     @Column(nullable = false, length = 255)
     private String nome;
 
+    @Size(max = 500)
     @Column(length = 500)
     private String descricao;
 
+    @Size(max = 100)
     @Column(length = 100)
     private String marca;
 
-    @Column(length = 20)
+    @Size(max = 20)
+    @Column(name = "unidade_medida", length = 20)
     private String unidadeMedida;
 
     private Double peso;
 
-    @Column(unique = true, length = 50)
+    @Size(max = 50)
+    @Column(name = "codigo_barras", unique = true, length = 50)
     private String codigoBarras;
 
     // TODO: Ponto de extensão para futura implementação de Categoria
     // A Categoria será um agregado próprio vinculado ao Produto em sprints futuras.
+    @Size(max = 255)
+    @Column(name = "imagem_principal", length = 255)
     private String imagemPrincipal;
+    
     private Boolean ativo;
 
 }
