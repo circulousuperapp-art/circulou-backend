@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class PedidoFacadeImpl implements PedidoUseCase {
 
     private final PedidoService pedidoService;
@@ -80,6 +81,7 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     }
 
     @Override
+    @Transactional
     public PedidoResponseDTO atualizar(Long id, PedidoRequestDTO dto) {
         Pedido pedido = pedidoService.buscarPorId(id);
         // Atualizações limitadas de pedido conforme regras de negócio
@@ -88,11 +90,13 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         pedidoService.deletar(id);
     }
 
     @Override
+    @Transactional
     public void cancelar(Long id) {
         pedidoService.cancelar(id);
     }

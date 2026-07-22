@@ -7,10 +7,12 @@ import br.com.circulou.circulou_backend.model.Produto;
 import br.com.circulou.circulou_backend.port.in.ProdutoUseCase;
 import br.com.circulou.circulou_backend.service.ProdutoService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class ProdutoFacadeImpl implements ProdutoUseCase {
 
     private final ProdutoService produtoService;
@@ -37,6 +39,7 @@ public class ProdutoFacadeImpl implements ProdutoUseCase {
     }
 
     @Override
+    @Transactional
     public ProdutoResponseDTO salvar(ProdutoRequestDTO dto) {
         Produto produto = produtoMapper.toEntity(dto);
         Produto produtoSalvo = produtoService.salvar(produto);
@@ -44,6 +47,7 @@ public class ProdutoFacadeImpl implements ProdutoUseCase {
     }
 
     @Override
+    @Transactional
     public ProdutoResponseDTO atualizar(Long id, ProdutoRequestDTO dto) {
         Produto produto = produtoService.buscarPorId(id);
         produtoMapper.updateEntityFromDto(produto, dto);
@@ -52,6 +56,7 @@ public class ProdutoFacadeImpl implements ProdutoUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         produtoService.deletar(id);
     }

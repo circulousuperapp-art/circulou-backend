@@ -10,10 +10,12 @@ import br.com.circulou.circulou_backend.port.out.LojistaProfileRepositoryPort;
 import br.com.circulou.circulou_backend.service.LojaService;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class LojaFacadeImpl implements LojaUseCase {
     private final LojaService lojaService;
     private final LojaMapper lojaMapper;
@@ -42,6 +44,7 @@ public class LojaFacadeImpl implements LojaUseCase {
     }
 
     @Override
+    @Transactional
     public LojaResponseDTO salvar(LojaRequestDTO dto) {
         Loja loja = lojaMapper.toEntity(dto);
         
@@ -52,6 +55,7 @@ public class LojaFacadeImpl implements LojaUseCase {
     }
 
     @Override
+    @Transactional
     public LojaResponseDTO atualizar(Long id, LojaRequestDTO dto) {
         Loja loja = lojaService.buscarPorId(id);
 
@@ -72,6 +76,7 @@ public class LojaFacadeImpl implements LojaUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         lojaService.deletar(id);
     }

@@ -11,10 +11,12 @@ import br.com.circulou.circulou_backend.service.LojaService;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.ProdutoService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class OfertaFacadeImpl implements OfertaUseCase {
 
     private final OfertaService ofertaService;
@@ -63,6 +65,7 @@ public class OfertaFacadeImpl implements OfertaUseCase {
     }
 
     @Override
+    @Transactional
     public OfertaResponseDTO salvar(OfertaRequestDTO dto) {
         Oferta oferta = ofertaMapper.toEntity(dto);
         vincularRelacionamentos(oferta, dto.getLojaId(), dto.getProdutoId());
@@ -72,6 +75,7 @@ public class OfertaFacadeImpl implements OfertaUseCase {
     }
 
     @Override
+    @Transactional
     public OfertaResponseDTO atualizar(Long id, OfertaRequestDTO dto) {
         Oferta oferta = ofertaService.buscarPorId(id);
         
@@ -83,6 +87,7 @@ public class OfertaFacadeImpl implements OfertaUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         ofertaService.deletar(id);
     }

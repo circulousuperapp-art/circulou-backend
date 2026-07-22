@@ -8,10 +8,12 @@ import br.com.circulou.circulou_backend.port.in.UsuarioUseCase;
 import br.com.circulou.circulou_backend.service.UsuarioService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class UsuarioFacadeImpl implements UsuarioUseCase {
 
     private final UsuarioService usuarioService;
@@ -41,6 +43,7 @@ public class UsuarioFacadeImpl implements UsuarioUseCase {
     }
 
     @Override
+    @Transactional
     public UsuarioResponseDTO salvar(UsuarioRequestDTO dto) {
         Usuario usuario = usuarioMapper.toEntity(dto);
         usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
@@ -50,6 +53,7 @@ public class UsuarioFacadeImpl implements UsuarioUseCase {
     }
 
     @Override
+    @Transactional
     public UsuarioResponseDTO atualizar(Long id, UsuarioRequestDTO dto) {
         Usuario usuario = usuarioService.buscarPorId(id);
         
@@ -64,6 +68,7 @@ public class UsuarioFacadeImpl implements UsuarioUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         usuarioService.deletar(id);
     }

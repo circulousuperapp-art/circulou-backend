@@ -3,14 +3,12 @@ package br.com.circulou.circulou_backend.adapter.in.consumer;
 import br.com.circulou.circulou_backend.adapter.out.event.KafkaTopics;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 
 @Component
-@ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "kafka")
 public class PedidoKafkaConsumer {
 
     private static final Logger logger = LoggerFactory.getLogger(PedidoKafkaConsumer.class);

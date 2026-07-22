@@ -5,10 +5,12 @@ import br.com.circulou.circulou_backend.dto.MotoristaProfileResponseDTO;
 import br.com.circulou.circulou_backend.facade.MotoristaProfileFacade;
 import br.com.circulou.circulou_backend.port.in.MotoristaProfileUseCase;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class MotoristaProfileFacadeImpl implements MotoristaProfileFacade {
 
     private final MotoristaProfileUseCase motoristaProfileUseCase;
@@ -28,16 +30,19 @@ public class MotoristaProfileFacadeImpl implements MotoristaProfileFacade {
     }
 
     @Override
+    @Transactional
     public MotoristaProfileResponseDTO salvar(MotoristaProfileRequestDTO dto) {
         return motoristaProfileUseCase.salvar(dto);
     }
 
     @Override
+    @Transactional
     public MotoristaProfileResponseDTO atualizar(Long id, MotoristaProfileRequestDTO dto) {
         return motoristaProfileUseCase.atualizar(id, dto);
     }
 
     @Override
+    @Transactional
     public void desativar(Long id) {
         motoristaProfileUseCase.desativar(id);
     }

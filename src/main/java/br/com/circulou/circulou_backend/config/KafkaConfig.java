@@ -2,7 +2,6 @@ package br.com.circulou.circulou_backend.config;
 
 import br.com.circulou.circulou_backend.adapter.out.event.KafkaTopics;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -10,7 +9,6 @@ import org.springframework.kafka.config.TopicBuilder;
 
 @Configuration
 @EnableKafka
-@ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "kafka")
 public class KafkaConfig {
 
     @Bean

@@ -12,9 +12,11 @@ import java.util.Date;
 @Service
 public class JwtService {
 
-    private static final String SECRET = "circulou-super-app-chave-secreta-jwt-com-no-minimo-32-caracteres";
+    private final SecretKey secretKey;
 
-    private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
+    public JwtService(@org.springframework.beans.factory.annotation.Value("${circulou.security.jwt.secret:circulou-super-app-chave-secreta-jwt-com-no-minimo-32-caracteres}") String secret) {
+        this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+    }
 
     public String gerarToken(String email) {
         long agora = System.currentTimeMillis();

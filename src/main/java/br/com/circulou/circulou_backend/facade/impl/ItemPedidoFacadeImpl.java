@@ -11,10 +11,12 @@ import br.com.circulou.circulou_backend.service.ItemPedidoService;
 import br.com.circulou.circulou_backend.service.PedidoService;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
+@Transactional(readOnly = true)
 public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
 
     private final ItemPedidoService itemPedidoService;
@@ -47,6 +49,7 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
     }
 
     @Override
+    @Transactional
     public ItemPedidoResponseDTO salvar(ItemPedidoRequestDTO dto) {
         ItemPedido itemPedido = itemPedidoMapper.toEntity(dto);
         vincularRelacionamentos(itemPedido, dto.getPedidoId(), dto.getOfertaId());
@@ -56,6 +59,7 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
     }
 
     @Override
+    @Transactional
     public ItemPedidoResponseDTO atualizar(Long id, ItemPedidoRequestDTO dto) {
         ItemPedido itemPedido = itemPedidoService.buscarPorId(id);
 
@@ -67,6 +71,7 @@ public class ItemPedidoFacadeImpl implements ItemPedidoUseCase {
     }
 
     @Override
+    @Transactional
     public void deletar(Long id) {
         itemPedidoService.deletar(id);
     }
