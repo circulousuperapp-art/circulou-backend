@@ -1,26 +1,22 @@
 package br.com.circulou.circulou_backend.adapter.out.event;
 
+import br.com.circulou.circulou_backend.integration.BaseIntegrationTest;
 import br.com.circulou.circulou_backend.model.OutboxEvent;
 import br.com.circulou.circulou_backend.model.OutboxStatus;
 import br.com.circulou.circulou_backend.model.event.PedidoCriadoEvent;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
 import br.com.circulou.circulou_backend.port.out.OutboxRepositoryPort;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
 @Transactional
-class OutboxContractIT {
+class OutboxContractIT extends BaseIntegrationTest {
 
     @Autowired
     @org.springframework.beans.factory.annotation.Qualifier("outboxEventPublisherAdapter")
@@ -28,9 +24,6 @@ class OutboxContractIT {
 
     @Autowired
     private OutboxRepositoryPort outboxRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     void devePersistirEventoComContratoPadronizadoETopicoCorreto() throws Exception {
