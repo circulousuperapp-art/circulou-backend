@@ -38,7 +38,7 @@ public class OutboxEvent {
     private String correlationId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private OutboxStatus status;
 
     @Builder.Default

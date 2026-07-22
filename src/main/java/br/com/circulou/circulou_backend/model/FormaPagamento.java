@@ -23,6 +23,7 @@ public class FormaPagamento {
 
     private String apelido;
 
+    @Column(name = "ultimos4_digitos")
     private String ultimos4Digitos;
 
     private String tokenPagamento;

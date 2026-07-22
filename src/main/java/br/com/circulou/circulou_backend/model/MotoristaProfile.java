@@ -25,19 +25,19 @@ public class MotoristaProfile {
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private StatusPerfil statusPerfil;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String cnh;
 
     @Column(length = 10, nullable = false)
     private String categoriaCnh;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private StatusDocumentacao statusDocumentacao;
 
-    @Column(precision = 3, scale = 2)
+    @Column(nullable = false, precision = 3, scale = 2)
     private BigDecimal ratingMedia = BigDecimal.ZERO;
 }

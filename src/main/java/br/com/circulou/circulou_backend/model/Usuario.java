@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Column;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.FetchType;
@@ -30,8 +31,10 @@ public class Usuario {
 
     private String nome;
 
+    @Column(nullable = false, unique = true, length = 255)
     private String email;
 
+    @Column(nullable = false, length = 100)
     private String senha;
 
     private String role;

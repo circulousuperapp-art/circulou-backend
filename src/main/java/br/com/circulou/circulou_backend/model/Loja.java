@@ -23,13 +23,13 @@ public class Loja {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
     private String nome;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, length = 255)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 20)
     private String telefone;
 
     private String logo;

@@ -27,10 +27,10 @@ public class LojistaProfile {
     private Usuario usuario;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private StatusPerfil statusPerfil;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String cnpj;
 
     @Column(length = 255, nullable = false)
@@ -40,10 +40,10 @@ public class LojistaProfile {
     private String segmento;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private StatusDocumentacao statusDocumentacao;
 
-    @Column(precision = 3, scale = 2)
+    @Column(nullable = false, precision = 3, scale = 2)
     private BigDecimal ratingMedia = BigDecimal.ZERO;
 
     @JsonIgnore
