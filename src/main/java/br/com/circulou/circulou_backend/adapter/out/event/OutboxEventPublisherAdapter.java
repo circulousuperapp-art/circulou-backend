@@ -4,10 +4,10 @@ import br.com.circulou.circulou_backend.model.OutboxEvent;
 import br.com.circulou.circulou_backend.model.OutboxStatus;
 import br.com.circulou.circulou_backend.model.event.*;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
+import br.com.circulou.circulou_backend.port.out.EventSerializerPort;
 import br.com.circulou.circulou_backend.port.out.OutboxRepositoryPort;
+import br.com.circulou.circulou_backend.port.out.TopicRegistryPort;
 import br.com.circulou.circulou_backend.shared.observability.CorrelationContext;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -22,11 +22,15 @@ public class OutboxEventPublisherAdapter implements EventPublisherPort {
 
     private static final Logger logger = LoggerFactory.getLogger(OutboxEventPublisherAdapter.class);
     private final OutboxRepositoryPort outboxRepositoryPort;
-    private final ObjectMapper objectMapper;
+    private final EventSerializerPort eventSerializer;
+    private final TopicRegistryPort topicRegistry;
 
-    public OutboxEventPublisherAdapter(OutboxRepositoryPort outboxRepositoryPort, ObjectMapper objectMapper) {
+    public OutboxEventPublisherAdapter(OutboxRepositoryPort outboxRepositoryPort, 
+                                       EventSerializerPort eventSerializer,
+                                       TopicRegistryPort topicRegistry) {
         this.outboxRepositoryPort = outboxRepositoryPort;
-        this.objectMapper = objectMapper;
+        this.eventSerializer = eventSerializer;
+        this.topicRegistry = topicRegistry;
     }
 
     @Override
@@ -42,11 +46,15 @@ public class OutboxEventPublisherAdapter implements EventPublisherPort {
         }
 
         try {
+            String payload = eventSerializer.serialize(domainEvent);
+            String topic = topicRegistry.resolveTopic(domainEvent);
+
             OutboxEvent outboxEvent = OutboxEvent.builder()
                     .aggregateId(extractAggregateId(domainEvent))
                     .aggregateType(extractAggregateType(domainEvent))
                     .eventType(domainEvent.getClass().getSimpleName())
-                    .payload(objectMapper.writeValueAsString(domainEvent))
+                    .topic(topic)
+                    .payload(payload)
                     .correlationId(correlationId)
                     .status(OutboxStatus.PENDENTE)
                     .attemptCount(0)
@@ -55,11 +63,11 @@ public class OutboxEventPublisherAdapter implements EventPublisherPort {
                     .build();
 
             outboxRepositoryPort.save(outboxEvent);
-            logger.debug("[OUTBOX EVENT] Evento persistido (CorrelationId: {}): {} para agregado {}", 
-                    correlationId, outboxEvent.getEventType(), outboxEvent.getAggregateId());
+            logger.debug("[OUTBOX EVENT] Evento persistido (CorrelationId: {}): {} para agregado {} no tópico {}", 
+                    correlationId, outboxEvent.getEventType(), outboxEvent.getAggregateId(), topic);
 
-        } catch (JsonProcessingException e) {
-            logger.error("Erro ao serializar evento para outbox: {}", domainEvent.getClass().getSimpleName(), e);
+        } catch (Exception e) {
+            logger.error("Erro ao processar evento para outbox: {}", domainEvent.getClass().getSimpleName(), e);
         }
     }
 

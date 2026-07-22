@@ -79,7 +79,7 @@ public class OutboxRelayer {
     }
 
     private void publishEvent(OutboxEvent event) {
-        String topic = determineTopic(event.getEventType());
+        String topic = event.getTopic();
         Map<String, String> headers = Map.of("correlation-id", event.getCorrelationId());
 
         Timer.Sample sample = Timer.start(meterRegistry);
@@ -143,18 +143,5 @@ public class OutboxRelayer {
                 .increment();
 
         outboxRepositoryPort.save(event);
-    }
-
-    private String determineTopic(String eventType) {
-        return switch (eventType) {
-            case "PedidoCriadoEvent" -> KafkaTopics.PEDIDO_CRIADO;
-            case "PedidoCanceladoEvent" -> KafkaTopics.PEDIDO_CANCELADO;
-            case "PedidoLiberadoEvent" -> KafkaTopics.PEDIDO_LIBERADO;
-            case "PedidoEntregueEvent" -> KafkaTopics.PEDIDO_ENTREGUE;
-            case "PedidoEmRotaEvent" -> KafkaTopics.PEDIDO_EM_ROTA;
-            case "PedidoProntoParaRetiradaEvent" -> KafkaTopics.PEDIDO_PRONTO_PARA_RETIRADA;
-            case "PedidoEmPreparoEvent" -> KafkaTopics.PEDIDO_EM_PREPARO;
-            default -> "circulou.events." + eventType.replaceAll("([a-z])([A-Z])", "$1-$2").toLowerCase();
-        };
     }
 }
