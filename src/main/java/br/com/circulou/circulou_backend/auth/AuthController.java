@@ -46,22 +46,33 @@ public class AuthController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {
-        logger.info("Tentativa de login para: {}", request.getEmail());
+        logger.info("Tentativa de login para: {}", mascararEmail(request.getEmail()));
 
         Usuario usuario = usuarioRepositoryPort.findByEmail(request.getEmail())
                 .orElseThrow(() -> {
-                    logger.warn("Usuário não encontrado: {}", request.getEmail());
+                    logger.warn("Usuário não encontrado: {}", mascararEmail(request.getEmail()));
                     return new BusinessException("E-mail ou senha inválidos");
                 });
 
         if (!passwordEncoder.matches(request.getSenha(), usuario.getSenha())) {
-            logger.warn("Senha inválida para: {}", request.getEmail());
+            logger.warn("Senha inválida para: {}", mascararEmail(request.getEmail()));
             throw new BusinessException("E-mail ou senha inválidos");
         }
 
         String token = jwtService.gerarToken(usuario.getEmail());
-        logger.info("Login bem-sucedido para: {}", request.getEmail());
+        logger.info("Login bem-sucedido para: {}", mascararEmail(request.getEmail()));
 
         return new LoginResponse(token);
+    }
+
+    private String mascararEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return email;
+        }
+        int atIndex = email.indexOf("@");
+        if (atIndex <= 2) {
+            return "***" + email.substring(atIndex);
+        }
+        return email.substring(0, 2) + "****" + email.substring(atIndex);
     }
 }

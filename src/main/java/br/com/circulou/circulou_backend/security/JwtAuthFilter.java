@@ -52,17 +52,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Usuario usuario = usuarioRepositoryPort.findByEmail(email).orElse(null);
 
                 if (usuario != null && jwtService.tokenValido(token, usuario.getEmail())) {
-                    logger.debug("Token válido para o usuário: {}", email);
+                    String role = usuario.getRole() != null ? usuario.getRole() : "USER";
+                    if (!role.startsWith("ROLE_")) {
+                        role = "ROLE_" + role;
+                    }
+
+                    logger.debug("Token válido para o usuário: {}. Role: {}", mascararEmail(email), role);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     usuario.getEmail(),
                                     null,
-                                    List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                                    List.of(new SimpleGrantedAuthority(role))
                             );
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    logger.warn("Usuário não encontrado ou token inválido para o email: {}", email);
+                    logger.warn("Usuário não encontrado ou token inválido para o email: {}", mascararEmail(email));
                 }
             }
         } catch (Exception e) {
@@ -70,5 +75,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String mascararEmail(String email) {
+        if (email == null || !email.contains("@")) {
+            return email;
+        }
+        int atIndex = email.indexOf("@");
+        if (atIndex <= 2) {
+            return "***" + email.substring(atIndex);
+        }
+        return email.substring(0, 2) + "****" + email.substring(atIndex);
     }
 }
