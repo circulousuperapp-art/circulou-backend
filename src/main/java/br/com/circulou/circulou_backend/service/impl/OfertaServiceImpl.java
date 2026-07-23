@@ -5,6 +5,8 @@ import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.port.out.OfertaRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,11 @@ public class OfertaServiceImpl implements OfertaService {
     @Override
     public List<Oferta> listarTodas() {
         return repositoryPort.findAll();
+    }
+
+    @Override
+    public Page<Oferta> listarTodas(Pageable pageable) {
+        return repositoryPort.findAll(pageable);
     }
 
     @Override

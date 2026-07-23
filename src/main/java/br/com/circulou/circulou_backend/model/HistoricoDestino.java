@@ -28,11 +28,13 @@ public class HistoricoDestino {
     private String nomeLocal;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "endereco", length = 255)
     private String endereco;
 
+    @Column(name = "latitude")
     private Double latitude;
 
+    @Column(name = "longitude")
     private Double longitude;
 
     @Column(name = "ultima_utilizacao")

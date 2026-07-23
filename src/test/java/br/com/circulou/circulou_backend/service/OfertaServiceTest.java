@@ -14,8 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -53,6 +58,32 @@ class OfertaServiceTest {
         oferta.setEstoque(10);
         oferta.setAtivo(true);
         oferta.setDisponivel(true);
+    }
+
+    @Test
+    @DisplayName("Deve listar todas as ofertas")
+    void deveListarTodasOfertas() {
+        when(repositoryPort.findAll()).thenReturn(List.of(oferta));
+
+        List<Oferta> resultado = ofertaService.listarTodas();
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        verify(repositoryPort).findAll();
+    }
+
+    @Test
+    @DisplayName("Deve listar ofertas com paginação")
+    void deveListarOfertasComPaginacao() {
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Oferta> page = new PageImpl<>(List.of(oferta));
+        when(repositoryPort.findAll(pageable)).thenReturn(page);
+
+        Page<Oferta> resultado = ofertaService.listarTodas(pageable);
+
+        assertNotNull(resultado);
+        assertEquals(1, resultado.getTotalElements());
+        verify(repositoryPort).findAll(pageable);
     }
 
     @Test

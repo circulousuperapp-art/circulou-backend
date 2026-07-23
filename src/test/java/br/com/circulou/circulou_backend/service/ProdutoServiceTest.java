@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +41,7 @@ class ProdutoServiceTest {
         produto.setDescricao("Pão, carne e queijo");
         produto.setMarca("Marca");
         produto.setUnidadeMedida("un");
-        produto.setPeso(0.3);
+        produto.setPeso(new BigDecimal("0.300"));
         produto.setCodigoBarras("123456");
         produto.setAtivo(true);
     }

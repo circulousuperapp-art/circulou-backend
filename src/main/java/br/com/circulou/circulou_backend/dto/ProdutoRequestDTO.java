@@ -1,6 +1,7 @@
 package br.com.circulou.circulou_backend.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -9,6 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
@@ -39,8 +42,9 @@ public class ProdutoRequestDTO {
 
     @NotNull
     @Positive
-    @Schema(description = "Peso do produto", example = "1.5")
-    private Double peso;
+    @Digits(integer = 7, fraction = 3)
+    @Schema(description = "Peso do produto", example = "1.500")
+    private BigDecimal peso;
 
     @NotBlank
     @Size(max = 50)

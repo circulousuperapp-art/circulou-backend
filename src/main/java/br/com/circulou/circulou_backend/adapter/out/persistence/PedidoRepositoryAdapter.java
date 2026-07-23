@@ -3,6 +3,8 @@ package br.com.circulou.circulou_backend.adapter.out.persistence;
 import br.com.circulou.circulou_backend.model.Pedido;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.repository.PedidoJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +22,11 @@ public class PedidoRepositoryAdapter implements PedidoRepositoryPort {
     @Override
     public List<Pedido> findAll() {
         return pedidoRepository.findAll();
+    }
+
+    @Override
+    public Page<Pedido> findAll(Pageable pageable) {
+        return pedidoRepository.findAll(pageable);
     }
 
     @Override

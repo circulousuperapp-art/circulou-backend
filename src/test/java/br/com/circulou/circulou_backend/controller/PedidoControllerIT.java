@@ -55,7 +55,7 @@ class PedidoControllerIT extends BaseIntegrationTest {
         produtoDTO.setDescricao("Desc");
         produtoDTO.setMarca("Marca");
         produtoDTO.setUnidadeMedida("un");
-        produtoDTO.setPeso(1.0);
+        produtoDTO.setPeso(new BigDecimal("1.000"));
         produtoDTO.setCodigoBarras("7891234567890");
         produtoDTO.setAtivo(true);
         MvcResult resP = mockMvc.perform(post("/produtos")

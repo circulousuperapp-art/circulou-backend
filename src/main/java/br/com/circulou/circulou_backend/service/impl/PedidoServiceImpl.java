@@ -8,6 +8,8 @@ import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,11 @@ public class PedidoServiceImpl implements PedidoService {
     @Override
     public List<Pedido> listarTodos() {
         return pedidoRepositoryPort.findAll();
+    }
+
+    @Override
+    public Page<Pedido> listarTodos(Pageable pageable) {
+        return pedidoRepositoryPort.findAll(pageable);
     }
 
     @Override

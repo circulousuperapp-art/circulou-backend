@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,8 +30,8 @@ public class ProdutoResponseDTO {
     @Schema(description = "Unidade de medida", example = "kg")
     private String unidadeMedida;
 
-    @Schema(description = "Peso do produto", example = "1.5")
-    private Double peso;
+    @Schema(description = "Peso do produto", example = "1.500")
+    private BigDecimal peso;
 
     @Schema(description = "Código de barras", example = "7891234567890")
     private String codigoBarras;

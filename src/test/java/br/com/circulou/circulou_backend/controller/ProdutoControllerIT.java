@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,7 +47,7 @@ class ProdutoControllerIT extends BaseIntegrationTest {
         requestDTO.setDescricao("Pão, carne e queijo");
         requestDTO.setMarca("Marca");
         requestDTO.setUnidadeMedida("un");
-        requestDTO.setPeso(0.2);
+        requestDTO.setPeso(new BigDecimal("0.200"));
         requestDTO.setCodigoBarras("111222333");
         requestDTO.setAtivo(true);
 

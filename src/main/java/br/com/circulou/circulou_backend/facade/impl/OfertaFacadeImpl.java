@@ -10,6 +10,8 @@ import br.com.circulou.circulou_backend.port.in.OfertaUseCase;
 import br.com.circulou.circulou_backend.service.LojaService;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.ProdutoService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +42,12 @@ public class OfertaFacadeImpl implements OfertaUseCase {
                 .stream()
                 .map(ofertaMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public Page<OfertaResponseDTO> listarTodas(Pageable pageable) {
+        return ofertaService.listarTodas(pageable)
+                .map(ofertaMapper::toResponseDTO);
     }
 
     @Override

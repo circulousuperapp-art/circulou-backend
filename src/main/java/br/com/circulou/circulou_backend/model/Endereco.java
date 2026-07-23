@@ -21,30 +21,30 @@ public class Endereco {
     private Long id;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "cep", length = 255)
     private String cep;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "logradouro", length = 255)
     private String logradouro;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "numero", length = 255)
     private String numero;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "complemento", length = 255)
     private String complemento;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "bairro", length = 255)
     private String bairro;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "cidade", length = 255)
     private String cidade;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "estado", length = 255)
     private String estado;
 }

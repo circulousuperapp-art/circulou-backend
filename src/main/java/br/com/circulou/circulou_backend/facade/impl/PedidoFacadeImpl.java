@@ -12,6 +12,8 @@ import br.com.circulou.circulou_backend.service.LojaService;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
 import br.com.circulou.circulou_backend.service.UsuarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,12 @@ public class PedidoFacadeImpl implements PedidoUseCase {
                 .stream()
                 .map(pedidoMapper::toResponseDTO)
                 .toList();
+    }
+
+    @Override
+    public Page<PedidoResponseDTO> listarTodos(Pageable pageable) {
+        return pedidoService.listarTodos(pageable)
+                .map(pedidoMapper::toResponseDTO);
     }
 
     @Override

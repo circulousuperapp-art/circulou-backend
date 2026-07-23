@@ -4,13 +4,19 @@ import br.com.circulou.circulou_backend.dto.ErrorResponseDTO;
 import br.com.circulou.circulou_backend.dto.OfertaRequestDTO;
 import br.com.circulou.circulou_backend.dto.OfertaResponseDTO;
 import br.com.circulou.circulou_backend.port.in.OfertaUseCase;
+import br.com.circulou.circulou_backend.config.PaginationProperties;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +27,11 @@ import java.util.List;
 public class OfertaController {
 
     private final OfertaUseCase ofertaUseCase;
+    private final PaginationProperties paginationProperties;
 
-    public OfertaController(OfertaUseCase ofertaUseCase) {
+    public OfertaController(OfertaUseCase ofertaUseCase, PaginationProperties paginationProperties) {
         this.ofertaUseCase = ofertaUseCase;
+        this.paginationProperties = paginationProperties;
     }
 
     @PostMapping
@@ -42,7 +50,7 @@ public class OfertaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todas as ofertas", description = "Retorna todas as ofertas comerciais cadastradas")
+    @Operation(summary = "Listar ofertas", description = "Retorna todas as ofertas cadastradas com paginação opcional. Se page e size forem omitidos, retorna a lista completa respeitando o limite máximo.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso"),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
@@ -50,8 +58,24 @@ public class OfertaController {
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    public List<OfertaResponseDTO> listarTodas() {
-        return ofertaUseCase.listarTodas();
+    public ResponseEntity<?> listarTodas(
+            @Parameter(description = "Número da página (0..N)") @RequestParam(required = false) Integer page,
+            @Parameter(description = "Tamanho da página") @RequestParam(required = false) Integer size,
+            @Parameter(description = "Ordenação (campo,asc|desc)") @RequestParam(required = false, defaultValue = "id,desc") String sort) {
+        
+        if (page == null && size == null) {
+            return ResponseEntity.ok(ofertaUseCase.listarTodas());
+        }
+
+        int pageNum = (page != null) ? page : 0;
+        int pageSize = (size != null) ? Math.min(size, paginationProperties.getMaxSize()) : paginationProperties.getDefaultSize();
+        
+        String[] sortParams = sort.split(",");
+        Sort sortOrder = Sort.by(sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc") ? 
+                Sort.Direction.DESC : Sort.Direction.ASC, sortParams[0]);
+        
+        Pageable pageable = PageRequest.of(pageNum, pageSize, sortOrder);
+        return ResponseEntity.ok(ofertaUseCase.listarTodas(pageable));
     }
 
     @GetMapping("/{id}")

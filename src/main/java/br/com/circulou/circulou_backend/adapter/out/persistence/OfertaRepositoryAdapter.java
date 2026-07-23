@@ -3,6 +3,8 @@ package br.com.circulou.circulou_backend.adapter.out.persistence;
 import br.com.circulou.circulou_backend.model.Oferta;
 import br.com.circulou.circulou_backend.port.out.OfertaRepositoryPort;
 import br.com.circulou.circulou_backend.repository.OfertaJpaRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -20,6 +22,11 @@ public class OfertaRepositoryAdapter implements OfertaRepositoryPort {
     @Override
     public List<Oferta> findAll() {
         return jpaRepository.findAll();
+    }
+
+    @Override
+    public Page<Oferta> findAll(Pageable pageable) {
+        return jpaRepository.findAll(pageable);
     }
 
     @Override

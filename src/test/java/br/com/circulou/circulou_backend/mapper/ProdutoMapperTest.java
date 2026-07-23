@@ -7,6 +7,8 @@ import br.com.circulou.circulou_backend.model.Produto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ProdutoMapperTest {
@@ -27,7 +29,7 @@ class ProdutoMapperTest {
         produto.setDescricao("Delicioso");
         produto.setMarca("Marca Famosa");
         produto.setUnidadeMedida("kg");
-        produto.setPeso(1.5);
+        produto.setPeso(new BigDecimal("1.500"));
         produto.setCodigoBarras("7891234567890");
         produto.setImagemPrincipal("http://img.com");
         produto.setAtivo(true);
@@ -56,7 +58,7 @@ class ProdutoMapperTest {
         requestDTO.setDescricao("Calabresa");
         requestDTO.setMarca("Forno");
         requestDTO.setUnidadeMedida("un");
-        requestDTO.setPeso(0.8);
+        requestDTO.setPeso(new BigDecimal("0.800"));
         requestDTO.setCodigoBarras("7890000000001");
         requestDTO.setImagemPrincipal("http://pizza.com");
         requestDTO.setAtivo(true);

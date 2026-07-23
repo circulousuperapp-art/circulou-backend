@@ -23,11 +23,11 @@ public class FormaPagamento {
     private Long id;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "tipo", length = 255)
     private String tipo;
 
     @Size(max = 255)
-    @Column(length = 255)
+    @Column(name = "apelido", length = 255)
     private String apelido;
 
     @Size(max = 255)
@@ -38,8 +38,10 @@ public class FormaPagamento {
     @Column(name = "token_pagamento", length = 255)
     private String tokenPagamento;
 
+    @Column(name = "principal")
     private Boolean principal;
 
+    @Column(name = "ativa")
     private Boolean ativa;
 
     @JsonIgnore
