@@ -27,6 +27,11 @@ public class OfertaServiceImpl implements OfertaService {
     }
 
     @Override
+    public List<Oferta> buscarTodasPorId(Iterable<Long> ids) {
+        return repositoryPort.findAllById(ids);
+    }
+
+    @Override
     public Oferta buscarPorId(Long id) {
         return repositoryPort.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Oferta não encontrada"));

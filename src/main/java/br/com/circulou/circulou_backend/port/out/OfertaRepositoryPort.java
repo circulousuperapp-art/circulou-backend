@@ -6,6 +6,7 @@ import java.util.Optional;
 
 public interface OfertaRepositoryPort {
     List<Oferta> findAll();
+    List<Oferta> findAllById(Iterable<Long> ids);
     Optional<Oferta> findById(Long id);
     List<Oferta> findByLojaId(Long lojaId);
     List<Oferta> findByProdutoId(Long produtoId);

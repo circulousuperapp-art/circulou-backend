@@ -6,6 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +19,8 @@ import java.util.List;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthFilter.class);
 
     private final JwtService jwtService;
     private final UsuarioRepositoryPort usuarioRepositoryPort;
@@ -42,13 +46,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         try {
             String email = jwtService.extrairEmail(token);
-            System.out.println("[DEBUG_LOG] Email extraído do token: " + email);
+            logger.debug("Email extraído do token: {}", email);
 
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 Usuario usuario = usuarioRepositoryPort.findByEmail(email).orElse(null);
 
                 if (usuario != null && jwtService.tokenValido(token, usuario.getEmail())) {
-                    System.out.println("[DEBUG_LOG] Token válido para o usuário: " + email);
+                    logger.debug("Token válido para o usuário: {}", email);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(
                                     usuario.getEmail(),
@@ -58,11 +62,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 } else {
-                    System.out.println("[DEBUG_LOG] Usuário não encontrado ou token inválido para o email: " + email);
+                    logger.warn("Usuário não encontrado ou token inválido para o email: {}", email);
                 }
             }
         } catch (Exception e) {
-            System.out.println("[DEBUG_LOG] Erro ao processar token JWT: " + e.getMessage());
+            logger.error("Erro ao processar token JWT: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);

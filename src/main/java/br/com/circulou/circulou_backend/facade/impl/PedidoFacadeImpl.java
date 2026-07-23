@@ -1,8 +1,10 @@
 package br.com.circulou.circulou_backend.facade.impl;
 
+import br.com.circulou.circulou_backend.dto.ItemPedidoSimplesDTO;
 import br.com.circulou.circulou_backend.dto.PedidoRequestDTO;
 import br.com.circulou.circulou_backend.dto.PedidoResponseDTO;
-import br.com.circulou.circulou_backend.mapper.ItemPedidoMapper;
+import br.com.circulou.circulou_backend.exception.BusinessException;
+import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.mapper.PedidoMapper;
 import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.port.in.PedidoUseCase;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Transactional(readOnly = true)
@@ -24,20 +28,17 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     private final LojaService lojaService;
     private final OfertaService ofertaService;
     private final PedidoMapper pedidoMapper;
-    private final ItemPedidoMapper itemPedidoMapper;
 
     public PedidoFacadeImpl(PedidoService pedidoService, 
-                            UsuarioService usuarioService, 
+                            UsuarioService usuarioService,
                             LojaService lojaService,
                             OfertaService ofertaService,
-                            PedidoMapper pedidoMapper,
-                            ItemPedidoMapper itemPedidoMapper) {
+                            PedidoMapper pedidoMapper) {
         this.pedidoService = pedidoService;
         this.usuarioService = usuarioService;
         this.lojaService = lojaService;
         this.ofertaService = ofertaService;
         this.pedidoMapper = pedidoMapper;
-        this.itemPedidoMapper = itemPedidoMapper;
     }
 
     @Override
@@ -57,27 +58,54 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     @Override
     @Transactional
     public PedidoResponseDTO salvar(PedidoRequestDTO dto) {
-        Pedido pedido = new Pedido();
-        vincularRelacionamentos(pedido, dto.getUsuarioId(), dto.getLojaId());
-
-        if (dto.getItens() != null) {
-            dto.getItens().forEach(itemDto -> {
-                Oferta oferta = ofertaService.buscarPorId(itemDto.getOfertaId());
-                
-                ItemPedido itemPedido = itemPedidoMapper.toEntity(itemDto);
-                itemPedido.setPedido(pedido);
-                itemPedido.setOferta(oferta);
-                
-                // Criação do snapshot comercial (ADR-001)
-                itemPedido.setNomeProduto(oferta.getProduto().getNome());
-                itemPedido.setPrecoUnitario(oferta.getPreco());
-                
-                pedido.getItens().add(itemPedido);
-            });
-        }
-
+        Pedido pedido = montarEntidadePedido(dto);
         Pedido pedidoSalvo = pedidoService.salvar(pedido);
         return pedidoMapper.toResponseDTO(pedidoSalvo);
+    }
+
+    private Pedido montarEntidadePedido(PedidoRequestDTO dto) {
+        Pedido pedido = new Pedido();
+        
+        Usuario usuario = usuarioService.buscarPorId(dto.getUsuarioId());
+        pedido.setUsuario(usuario);
+
+        Loja loja = lojaService.buscarPorId(dto.getLojaId());
+        pedido.setLoja(loja);
+
+        montarItensPedido(pedido, dto.getItens());
+
+        return pedido;
+    }
+
+    private void montarItensPedido(Pedido pedido, List<ItemPedidoSimplesDTO> itensDto) {
+        if (itensDto == null || itensDto.isEmpty()) {
+            throw new BusinessException("O pedido deve conter pelo menos um item");
+        }
+
+        List<Long> ofertaIds = itensDto.stream()
+                .map(ItemPedidoSimplesDTO::getOfertaId)
+                .toList();
+
+        Map<Long, Oferta> ofertasMap = ofertaService.buscarTodasPorId(ofertaIds).stream()
+                .collect(Collectors.toMap(Oferta::getId, o -> o));
+
+        for (ItemPedidoSimplesDTO itemDto : itensDto) {
+            Oferta oferta = ofertasMap.get(itemDto.getOfertaId());
+            if (oferta == null) {
+                throw new ResourceNotFoundException("Oferta não encontrada: " + itemDto.getOfertaId());
+            }
+
+            ItemPedido itemPedido = new ItemPedido();
+            itemPedido.setPedido(pedido);
+            itemPedido.setOferta(oferta);
+            itemPedido.setQuantidade(itemDto.getQuantidade());
+            
+            // Criação do snapshot comercial (ADR-001)
+            itemPedido.setNomeProduto(oferta.getProduto().getNome());
+            itemPedido.setPrecoUnitario(oferta.getPreco());
+            
+            pedido.getItens().add(itemPedido);
+        }
     }
 
     @Override
@@ -99,17 +127,5 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     @Transactional
     public void cancelar(Long id) {
         pedidoService.cancelar(id);
-    }
-
-    private void vincularRelacionamentos(Pedido pedido, Long usuarioId, Long lojaId) {
-        if (usuarioId != null) {
-            Usuario usuario = usuarioService.buscarPorId(usuarioId);
-            pedido.setUsuario(usuario);
-        }
-
-        if (lojaId != null) {
-            Loja loja = lojaService.buscarPorId(lojaId);
-            pedido.setLoja(loja);
-        }
     }
 }

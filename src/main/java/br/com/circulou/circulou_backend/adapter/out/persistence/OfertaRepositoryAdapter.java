@@ -23,6 +23,11 @@ public class OfertaRepositoryAdapter implements OfertaRepositoryPort {
     }
 
     @Override
+    public List<Oferta> findAllById(Iterable<Long> ids) {
+        return jpaRepository.findAllById(ids);
+    }
+
+    @Override
     public Optional<Oferta> findById(Long id) {
         return jpaRepository.findById(id);
     }

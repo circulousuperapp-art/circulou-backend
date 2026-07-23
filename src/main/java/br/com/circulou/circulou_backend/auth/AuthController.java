@@ -11,6 +11,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 @Tag(name = "Autenticação", description = "Endpoints para login e obtenção de token JWT")
 public class AuthController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     private final UsuarioRepositoryPort usuarioRepositoryPort;
     private final PasswordEncoder passwordEncoder;
@@ -40,22 +45,22 @@ public class AuthController {
         @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
-    public LoginResponse login(@RequestBody LoginRequest request) {
-        System.out.println("Tentativa de login para: " + request.getEmail());
+    public LoginResponse login(@Valid @RequestBody LoginRequest request) {
+        logger.info("Tentativa de login para: {}", request.getEmail());
 
         Usuario usuario = usuarioRepositoryPort.findByEmail(request.getEmail())
                 .orElseThrow(() -> {
-                    System.out.println("Usuário não encontrado: " + request.getEmail());
+                    logger.warn("Usuário não encontrado: {}", request.getEmail());
                     return new BusinessException("E-mail ou senha inválidos");
                 });
 
         if (!passwordEncoder.matches(request.getSenha(), usuario.getSenha())) {
-            System.out.println("Senha inválida para: " + request.getEmail());
+            logger.warn("Senha inválida para: {}", request.getEmail());
             throw new BusinessException("E-mail ou senha inválidos");
         }
 
         String token = jwtService.gerarToken(usuario.getEmail());
-        System.out.println("Login bem-sucedido para: " + request.getEmail());
+        logger.info("Login bem-sucedido para: {}", request.getEmail());
 
         return new LoginResponse(token);
     }

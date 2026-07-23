@@ -5,6 +5,7 @@ import java.util.List;
 
 public interface OfertaService {
     List<Oferta> listarTodas();
+    List<Oferta> buscarTodasPorId(Iterable<Long> ids);
     Oferta buscarPorId(Long id);
     List<Oferta> listarPorLoja(Long lojaId);
     List<Oferta> listarPorProduto(Long produtoId);

@@ -5,3 +5,4 @@
 | ADR-001 | Separação entre Produto, Oferta e Loja | ✅ Aprovada |
 | ADR-002 | Ciclo de Vida do Pedido e Política de Liberação para Produção | ✅ Aprovada |
 | ADR-003 | Padrão de Testes de Integração | ✅ Aprovada |
+| ADR-004 | Explicit Persistence Mapping | ✅ Aprovada |

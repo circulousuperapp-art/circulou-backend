@@ -2,11 +2,7 @@ package br.com.circulou.circulou_backend.service.impl;
 
 import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
-import br.com.circulou.circulou_backend.model.ItemPedido;
-import br.com.circulou.circulou_backend.model.Oferta;
-import br.com.circulou.circulou_backend.model.Pedido;
-import br.com.circulou.circulou_backend.model.PedidoStatus;
-import br.com.circulou.circulou_backend.model.PedidoStatusPolicy;
+import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
@@ -31,7 +27,7 @@ public class PedidoServiceImpl implements PedidoService {
     @Value("${circulou.pedido.janela-cancelamento-minutos:1}")
     private Integer janelaCancelamentoMinutos;
 
-    public PedidoServiceImpl(PedidoRepositoryPort pedidoRepositoryPort, 
+    public PedidoServiceImpl(PedidoRepositoryPort pedidoRepositoryPort,
                              OfertaService ofertaService,
                              PedidoStatusPolicy statusPolicy,
                              EventPublisherPort eventPublisher) {
