@@ -52,12 +52,12 @@ public class PedidoController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar pedidos", description = "Retorna o histórico de pedidos com paginação opcional. Se page e size forem omitidos, retorna a lista completa respeitando o limite máximo.")
+    @Operation(summary = "Listar pedidos", description = "Retorna o histórico de pedidos com paginação opcional. Se os parâmetros 'page' e 'size' forem omitidos, o sistema retorna a lista completa respeitando o limite máximo configurado.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso"),
-        @ApiResponse(responseCode = "401", description = "Não autenticado", 
+        @ApiResponse(responseCode = "200", description = "Lista de pedidos recuperada com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Não autenticado ou token inválido", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
+        @ApiResponse(responseCode = "500", description = "Erro inesperado ao processar a listagem", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<?> listarPedidos(

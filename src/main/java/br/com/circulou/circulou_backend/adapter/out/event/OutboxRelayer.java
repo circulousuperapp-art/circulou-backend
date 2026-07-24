@@ -5,6 +5,7 @@ import br.com.circulou.circulou_backend.model.OutboxStatus;
 import br.com.circulou.circulou_backend.port.out.MessagePublisherPort;
 import br.com.circulou.circulou_backend.port.out.OutboxRepositoryPort;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
 import io.micrometer.core.instrument.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +49,13 @@ public class OutboxRelayer {
     }
 
     private void registerGauges() {
-        meterRegistry.gauge("circulou.outbox.backlog.pending", 
+        meterRegistry.gauge("circulou.outbox.backlog", 
+                List.of(Tag.of("status", "pending")),
                 outboxRepositoryPort, 
                 repo -> repo.countByStatus(OutboxStatus.PENDENTE));
         
-        meterRegistry.gauge("circulou.outbox.backlog.failed", 
+        meterRegistry.gauge("circulou.outbox.backlog", 
+                List.of(Tag.of("status", "failed")),
                 outboxRepositoryPort, 
                 repo -> repo.countByStatus(OutboxStatus.FALHA));
     }

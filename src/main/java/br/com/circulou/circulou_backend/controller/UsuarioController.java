@@ -40,10 +40,12 @@ public class UsuarioController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar todos os usuários", description = "Retorna uma lista de todos os usuários cadastrados")
+    @Operation(summary = "Listar todos os usuários", description = "Retorna uma lista contendo todos os usuários cadastrados no sistema. Endpoint de uso administrativo.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Lista recuperada com sucesso"),
-        @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
+        @ApiResponse(responseCode = "200", description = "Lista de usuários recuperada com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Não autenticado ou token inválido", 
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+        @ApiResponse(responseCode = "500", description = "Erro interno ao processar a listagem", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public List<UsuarioResponseDTO> listarUsuarios() {

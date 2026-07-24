@@ -37,12 +37,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Realizar login", description = "Autentica um usuário e retorna um token JWT válido por 1 hora")
+    @Operation(summary = "Autenticar usuário", description = "Valida as credenciais do usuário (e-mail e senha) e retorna um token JWT válido para acesso aos recursos protegidos.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Login realizado com sucesso"),
-        @ApiResponse(responseCode = "400", description = "E-mail ou senha inválidos", 
+        @ApiResponse(responseCode = "200", description = "Autenticação realizada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "E-mail ou senha incorretos ou dados malformatados", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
-        @ApiResponse(responseCode = "500", description = "Erro interno do servidor", 
+        @ApiResponse(responseCode = "500", description = "Erro interno no processo de autenticação", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public LoginResponse login(@Valid @RequestBody LoginRequest request) {

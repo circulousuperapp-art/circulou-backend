@@ -135,7 +135,11 @@ class OutboxRelayerTest {
         when(outboxRepositoryPort.countByStatus(OutboxStatus.FALHA)).thenReturn(5L);
 
         // When & Then
-        assertEquals(10.0, meterRegistry.get("circulou.outbox.backlog.pending").gauge().value());
-        assertEquals(5.0, meterRegistry.get("circulou.outbox.backlog.failed").gauge().value());
+        assertEquals(10.0, meterRegistry.get("circulou.outbox.backlog")
+                .tag("status", "pending")
+                .gauge().value());
+        assertEquals(5.0, meterRegistry.get("circulou.outbox.backlog")
+                .tag("status", "failed")
+                .gauge().value());
     }
 }
