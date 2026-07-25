@@ -30,6 +30,16 @@ public class PedidoRepositoryAdapter implements PedidoRepositoryPort {
     }
 
     @Override
+    public List<Pedido> findByUsuarioId(Long usuarioId) {
+        return pedidoRepository.findByUsuarioId(usuarioId);
+    }
+
+    @Override
+    public Page<Pedido> findByUsuarioId(Long usuarioId, Pageable pageable) {
+        return pedidoRepository.findByUsuarioId(usuarioId, pageable);
+    }
+
+    @Override
     public Optional<Pedido> findById(Long id) {
         return pedidoRepository.findById(id);
     }

@@ -30,6 +30,12 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepositoryPort.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail: " + email));
+    }
+
+    @Override
     @Transactional
     public Usuario salvar(Usuario usuario) {
         return usuarioRepositoryPort.save(usuario);

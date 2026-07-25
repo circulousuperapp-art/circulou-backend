@@ -10,7 +10,7 @@ public class PedidoStatusPolicy {
             PedidoStatus.PENDENTE, EnumSet.of(PedidoStatus.AGUARDANDO_LIBERACAO, PedidoStatus.CANCELADO),
             PedidoStatus.AGUARDANDO_LIBERACAO, EnumSet.of(PedidoStatus.EM_PREPARO, PedidoStatus.CANCELADO),
             PedidoStatus.EM_PREPARO, EnumSet.of(PedidoStatus.PRONTO_PARA_RETIRADA, PedidoStatus.CANCELADO),
-            PedidoStatus.PRONTO_PARA_RETIRADA, EnumSet.of(PedidoStatus.EM_ROTA, PedidoStatus.CANCELADO),
+            PedidoStatus.PRONTO_PARA_RETIRADA, EnumSet.of(PedidoStatus.EM_ROTA, PedidoStatus.ENTREGUE, PedidoStatus.CANCELADO),
             PedidoStatus.EM_ROTA, EnumSet.of(PedidoStatus.ENTREGUE, PedidoStatus.CANCELADO),
             PedidoStatus.ENTREGUE, EnumSet.noneOf(PedidoStatus.class),
             PedidoStatus.CANCELADO, EnumSet.noneOf(PedidoStatus.class)

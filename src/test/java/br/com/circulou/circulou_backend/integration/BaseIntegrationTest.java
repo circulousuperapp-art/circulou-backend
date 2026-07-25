@@ -52,6 +52,7 @@ public abstract class BaseIntegrationTest {
         jdbcTemplate.execute("DELETE FROM produto");
         jdbcTemplate.execute("DELETE FROM loja");
         jdbcTemplate.execute("DELETE FROM lojista_profile");
+        jdbcTemplate.execute("DELETE FROM corrida");
         jdbcTemplate.execute("DELETE FROM motorista_profile");
         jdbcTemplate.execute("DELETE FROM forma_pagamento");
         jdbcTemplate.execute("DELETE FROM historico_destino");

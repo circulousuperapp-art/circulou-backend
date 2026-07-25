@@ -1,5 +1,6 @@
 package br.com.circulou.circulou_backend.facade.impl;
 
+import br.com.circulou.circulou_backend.dto.OfertaFilterDTO;
 import br.com.circulou.circulou_backend.dto.OfertaRequestDTO;
 import br.com.circulou.circulou_backend.dto.OfertaResponseDTO;
 import br.com.circulou.circulou_backend.mapper.OfertaMapper;
@@ -47,6 +48,12 @@ public class OfertaFacadeImpl implements OfertaUseCase {
     @Override
     public Page<OfertaResponseDTO> listarTodas(Pageable pageable) {
         return ofertaService.listarTodas(pageable)
+                .map(ofertaMapper::toResponseDTO);
+    }
+
+    @Override
+    public Page<OfertaResponseDTO> buscarComFiltros(OfertaFilterDTO filters, Pageable pageable) {
+        return ofertaService.buscarComFiltros(filters, pageable)
                 .map(ofertaMapper::toResponseDTO);
     }
 

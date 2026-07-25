@@ -11,12 +11,14 @@ import br.com.circulou.circulou_backend.shared.observability.CorrelationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
+@Primary
 @ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "outbox")
 public class OutboxEventPublisherAdapter implements EventPublisherPort {
 

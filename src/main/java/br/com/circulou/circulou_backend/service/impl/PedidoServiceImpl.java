@@ -50,6 +50,16 @@ public class PedidoServiceImpl implements PedidoService {
     }
 
     @Override
+    public List<Pedido> listarPorUsuario(Long usuarioId) {
+        return pedidoRepositoryPort.findByUsuarioId(usuarioId);
+    }
+
+    @Override
+    public Page<Pedido> listarPorUsuario(Long usuarioId, Pageable pageable) {
+        return pedidoRepositoryPort.findByUsuarioId(usuarioId, pageable);
+    }
+
+    @Override
     public Pedido buscarPorId(Long id) {
         return buscarEntidadePorId(id);
     }

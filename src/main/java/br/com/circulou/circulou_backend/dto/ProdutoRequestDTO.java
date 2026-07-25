@@ -51,6 +51,10 @@ public class ProdutoRequestDTO {
     @Schema(description = "Código de barras", example = "7891234567890")
     private String codigoBarras;
 
+    @Size(max = 100)
+    @Schema(description = "Categoria do produto", example = "Alimentos")
+    private String categoria;
+
     @Size(max = 255)
     @Schema(description = "URL da imagem principal", example = "http://imagem.com/produto.jpg")
     private String imagemPrincipal;

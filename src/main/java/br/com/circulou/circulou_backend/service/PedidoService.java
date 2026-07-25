@@ -10,6 +10,8 @@ import java.util.List;
 public interface PedidoService {
     List<Pedido> listarTodos();
     Page<Pedido> listarTodos(Pageable pageable);
+    List<Pedido> listarPorUsuario(Long usuarioId);
+    Page<Pedido> listarPorUsuario(Long usuarioId, Pageable pageable);
     Pedido buscarPorId(Long id);
     Pedido salvar(Pedido pedido);
     Pedido atualizar(Long id, Pedido pedido);

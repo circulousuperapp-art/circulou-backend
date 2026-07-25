@@ -36,6 +36,9 @@ public class ProdutoResponseDTO {
     @Schema(description = "Código de barras", example = "7891234567890")
     private String codigoBarras;
 
+    @Schema(description = "Categoria do produto", example = "Alimentos")
+    private String categoria;
+
     @Schema(description = "URL da imagem principal", example = "http://imagem.com/produto.jpg")
     private String imagemPrincipal;
 

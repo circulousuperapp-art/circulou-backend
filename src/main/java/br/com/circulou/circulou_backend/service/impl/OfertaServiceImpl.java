@@ -1,5 +1,6 @@
 package br.com.circulou.circulou_backend.service.impl;
 
+import br.com.circulou.circulou_backend.dto.OfertaFilterDTO;
 import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Oferta;
@@ -31,6 +32,11 @@ public class OfertaServiceImpl implements OfertaService {
     @Override
     public Page<Oferta> listarTodas(Pageable pageable) {
         return repositoryPort.findAll(pageable);
+    }
+
+    @Override
+    public Page<Oferta> buscarComFiltros(OfertaFilterDTO filters, Pageable pageable) {
+        return repositoryPort.findWithFilters(filters, pageable);
     }
 
     @Override

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -61,11 +62,15 @@ public class PedidoController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<?> listarPedidos(
+            @Parameter(description = "ID do usuário para filtrar o histórico") @RequestParam(required = false) Long usuarioId,
             @Parameter(description = "Número da página (0..N)") @RequestParam(required = false) Integer page,
             @Parameter(description = "Tamanho da página") @RequestParam(required = false) Integer size,
             @Parameter(description = "Ordenação (campo,asc|desc)") @RequestParam(required = false, defaultValue = "id,desc") String sort) {
         
         if (page == null && size == null) {
+            if (usuarioId != null) {
+                return ResponseEntity.ok(pedidoUseCase.listarPorUsuario(usuarioId));
+            }
             return ResponseEntity.ok(pedidoUseCase.listarTodos());
         }
 
@@ -77,14 +82,32 @@ public class PedidoController {
                 Sort.Direction.DESC : Sort.Direction.ASC, sortParams[0]);
         
         Pageable pageable = PageRequest.of(pageNum, pageSize, sortOrder);
+        
+        if (usuarioId != null) {
+            return ResponseEntity.ok(pedidoUseCase.listarPorUsuario(usuarioId, pageable));
+        }
+        
         return ResponseEntity.ok(pedidoUseCase.listarTodos(pageable));
     }
 
+    @GetMapping("/meus")
+    @Operation(summary = "Listar meus pedidos", description = "Retorna o histórico de pedidos do usuário autenticado")
+    public ResponseEntity<Page<PedidoResponseDTO>> listarMeusPedidos(
+            @Parameter(description = "Número da página (0..N)") @RequestParam(required = false, defaultValue = "0") Integer page,
+            @Parameter(description = "Tamanho da página") @RequestParam(required = false, defaultValue = "20") Integer size,
+            @Parameter(description = "Ordenação (campo,asc|desc)") @RequestParam(required = false, defaultValue = "id,desc") String sort) {
+        
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "id"));
+        return ResponseEntity.ok(pedidoUseCase.listarMeusPedidos(pageable));
+    }
+
     @GetMapping("/{id}")
-    @Operation(summary = "Buscar pedido por ID", description = "Retorna os detalhes de um pedido específico")
+    @Operation(summary = "Buscar pedido por ID", description = "Retorna os detalhes de um pedido específico. Se o usuário não for admin, ele só pode ver seus próprios pedidos.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Pedido encontrado"),
         @ApiResponse(responseCode = "401", description = "Não autenticado", 
+            content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
+        @ApiResponse(responseCode = "403", description = "Acesso negado",
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
         @ApiResponse(responseCode = "404", description = "Pedido não encontrado", 
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class))),
@@ -92,7 +115,7 @@ public class PedidoController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public PedidoResponseDTO buscarPedido(@PathVariable Long id) {
-        return pedidoUseCase.buscarPorId(id);
+        return pedidoUseCase.buscarMeuPedidoPorId(id);
     }
 
     @DeleteMapping("/{id}")
@@ -125,6 +148,30 @@ public class PedidoController {
     })
     public void cancelarPedido(@PathVariable Long id) {
         pedidoUseCase.cancelar(id);
+    }
+
+    @PatchMapping("/{id}/aceitar")
+    @Operation(summary = "Aceitar pedido", description = "Lojista aceita o pedido, movendo para status Em Preparação")
+    public void aceitarPedido(@PathVariable Long id) {
+        pedidoUseCase.aceitar(id);
+    }
+
+    @PatchMapping("/{id}/preparar")
+    @Operation(summary = "Colocar em preparação", description = "Lojista informa que o pedido está em fase de preparação")
+    public void prepararPedido(@PathVariable Long id) {
+        pedidoUseCase.preparar(id);
+    }
+
+    @PatchMapping("/{id}/pronto")
+    @Operation(summary = "Marcar como pronto", description = "Lojista informa que o pedido está pronto para retirada")
+    public void marcarComoPronto(@PathVariable Long id) {
+        pedidoUseCase.marcarComoPronto(id);
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    @Operation(summary = "Finalizar atendimento do produto", description = "Lojista confirma que o produto foi entregue ao cliente")
+    public void finalizarPedido(@PathVariable Long id) {
+        pedidoUseCase.finalizar(id);
     }
 
     @PutMapping("/{id}")

@@ -3,6 +3,7 @@ package br.com.circulou.circulou_backend.facade.impl;
 import br.com.circulou.circulou_backend.dto.ItemPedidoSimplesDTO;
 import br.com.circulou.circulou_backend.dto.PedidoRequestDTO;
 import br.com.circulou.circulou_backend.dto.PedidoResponseDTO;
+import br.com.circulou.circulou_backend.exception.AccessDeniedException;
 import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.mapper.PedidoMapper;
@@ -14,6 +15,7 @@ import br.com.circulou.circulou_backend.service.PedidoService;
 import br.com.circulou.circulou_backend.service.UsuarioService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,9 +60,47 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     }
 
     @Override
+    public List<PedidoResponseDTO> listarPorUsuario(Long usuarioId) {
+        return pedidoService.listarPorUsuario(usuarioId)
+                .stream()
+                .map(pedidoMapper::toResponseDTO)
+                .toList();
+    }
+
+    @Override
+    public Page<PedidoResponseDTO> listarPorUsuario(Long usuarioId, Pageable pageable) {
+        return pedidoService.listarPorUsuario(usuarioId, pageable)
+                .map(pedidoMapper::toResponseDTO);
+    }
+
+    @Override
     public PedidoResponseDTO buscarPorId(Long id) {
         Pedido pedido = pedidoService.buscarPorId(id);
         return pedidoMapper.toResponseDTO(pedido);
+    }
+
+    @Override
+    public Page<PedidoResponseDTO> listarMeusPedidos(Pageable pageable) {
+        Usuario usuario = obterUsuarioAutenticado();
+        return pedidoService.listarPorUsuario(usuario.getId(), pageable)
+                .map(pedidoMapper::toResponseDTO);
+    }
+
+    @Override
+    public PedidoResponseDTO buscarMeuPedidoPorId(Long id) {
+        Usuario usuario = obterUsuarioAutenticado();
+        Pedido pedido = pedidoService.buscarPorId(id);
+        
+        if (!pedido.getUsuario().getId().equals(usuario.getId())) {
+            throw new AccessDeniedException("Acesso negado: Este pedido não pertence ao seu usuário");
+        }
+        
+        return pedidoMapper.toResponseDTO(pedido);
+    }
+
+    private Usuario obterUsuarioAutenticado() {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return usuarioService.buscarPorEmail(email);
     }
 
     @Override
@@ -134,6 +174,37 @@ public class PedidoFacadeImpl implements PedidoUseCase {
     @Override
     @Transactional
     public void cancelar(Long id) {
+        Usuario usuario = obterUsuarioAutenticado();
+        Pedido pedido = pedidoService.buscarPorId(id);
+        
+        if (!pedido.getUsuario().getId().equals(usuario.getId())) {
+             throw new AccessDeniedException("Acesso negado: Você não tem permissão para cancelar este pedido");
+        }
+        
         pedidoService.cancelar(id);
+    }
+
+    @Override
+    @Transactional
+    public void aceitar(Long id) {
+        pedidoService.alterarStatus(id, PedidoStatus.EM_PREPARO);
+    }
+
+    @Override
+    @Transactional
+    public void preparar(Long id) {
+        pedidoService.alterarStatus(id, PedidoStatus.EM_PREPARO);
+    }
+
+    @Override
+    @Transactional
+    public void marcarComoPronto(Long id) {
+        pedidoService.alterarStatus(id, PedidoStatus.PRONTO_PARA_RETIRADA);
+    }
+
+    @Override
+    @Transactional
+    public void finalizar(Long id) {
+        pedidoService.alterarStatus(id, PedidoStatus.ENTREGUE);
     }
 }

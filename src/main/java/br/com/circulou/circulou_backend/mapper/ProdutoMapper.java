@@ -17,6 +17,7 @@ public class ProdutoMapper {
                 produto.getUnidadeMedida(),
                 produto.getPeso(),
                 produto.getCodigoBarras(),
+                produto.getCategoria(),
                 produto.getImagemPrincipal(),
                 produto.getAtivo()
         );
@@ -35,6 +36,7 @@ public class ProdutoMapper {
         produto.setUnidadeMedida(dto.getUnidadeMedida());
         produto.setPeso(dto.getPeso());
         produto.setCodigoBarras(dto.getCodigoBarras());
+        produto.setCategoria(dto.getCategoria());
         produto.setImagemPrincipal(dto.getImagemPrincipal());
         produto.setAtivo(dto.getAtivo());
     }

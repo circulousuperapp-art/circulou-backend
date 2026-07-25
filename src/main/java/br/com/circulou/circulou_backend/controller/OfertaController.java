@@ -1,6 +1,7 @@
 package br.com.circulou.circulou_backend.controller;
 
 import br.com.circulou.circulou_backend.dto.ErrorResponseDTO;
+import br.com.circulou.circulou_backend.dto.OfertaFilterDTO;
 import br.com.circulou.circulou_backend.dto.OfertaRequestDTO;
 import br.com.circulou.circulou_backend.dto.OfertaResponseDTO;
 import br.com.circulou.circulou_backend.port.in.OfertaUseCase;
@@ -50,7 +51,7 @@ public class OfertaController {
     }
 
     @GetMapping
-    @Operation(summary = "Listar ofertas", description = "Retorna todas as ofertas cadastradas com paginação opcional. Se os parâmetros 'page' e 'size' forem omitidos, o sistema retorna a lista completa respeitando o limite máximo configurado.")
+    @Operation(summary = "Listar ofertas", description = "Retorna todas as ofertas cadastradas com paginação e filtros opcionais. Se os parâmetros 'page' e 'size' forem omitidos, o sistema retorna a lista completa respeitando o limite máximo configurado.")
     @ApiResponses(value = {
         @ApiResponse(responseCode = "200", description = "Lista de ofertas recuperada com sucesso"),
         @ApiResponse(responseCode = "401", description = "Não autenticado ou token inválido", 
@@ -59,12 +60,15 @@ public class OfertaController {
             content = @Content(schema = @Schema(implementation = ErrorResponseDTO.class)))
     })
     public ResponseEntity<?> listarTodas(
+            @Parameter(description = "Filtros de busca") OfertaFilterDTO filters,
             @Parameter(description = "Número da página (0..N)") @RequestParam(required = false) Integer page,
             @Parameter(description = "Tamanho da página") @RequestParam(required = false) Integer size,
             @Parameter(description = "Ordenação (campo,asc|desc)") @RequestParam(required = false, defaultValue = "id,desc") String sort) {
         
         if (page == null && size == null) {
-            return ResponseEntity.ok(ofertaUseCase.listarTodas());
+            if (filters.getBusca() == null && filters.getCategoria() == null && filters.getLojaId() == null) {
+                return ResponseEntity.ok(ofertaUseCase.listarTodas());
+            }
         }
 
         int pageNum = (page != null) ? page : 0;
@@ -75,7 +79,7 @@ public class OfertaController {
                 Sort.Direction.DESC : Sort.Direction.ASC, sortParams[0]);
         
         Pageable pageable = PageRequest.of(pageNum, pageSize, sortOrder);
-        return ResponseEntity.ok(ofertaUseCase.listarTodas(pageable));
+        return ResponseEntity.ok(ofertaUseCase.buscarComFiltros(filters, pageable));
     }
 
     @GetMapping("/{id}")

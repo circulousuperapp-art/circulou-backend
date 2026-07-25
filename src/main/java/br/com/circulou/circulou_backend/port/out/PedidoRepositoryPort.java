@@ -10,6 +10,8 @@ import java.util.Optional;
 public interface PedidoRepositoryPort {
     List<Pedido> findAll();
     Page<Pedido> findAll(Pageable pageable);
+    List<Pedido> findByUsuarioId(Long usuarioId);
+    Page<Pedido> findByUsuarioId(Long usuarioId, Pageable pageable);
     Optional<Pedido> findById(Long id);
     Pedido save(Pedido pedido);
     void deleteById(Long id);

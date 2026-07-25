@@ -1,5 +1,6 @@
 package br.com.circulou.circulou_backend.port.in;
 
+import br.com.circulou.circulou_backend.dto.OfertaFilterDTO;
 import br.com.circulou.circulou_backend.dto.OfertaRequestDTO;
 import br.com.circulou.circulou_backend.dto.OfertaResponseDTO;
 import org.springframework.data.domain.Page;
@@ -10,6 +11,7 @@ import java.util.List;
 public interface OfertaUseCase {
     List<OfertaResponseDTO> listarTodas();
     Page<OfertaResponseDTO> listarTodas(Pageable pageable);
+    Page<OfertaResponseDTO> buscarComFiltros(OfertaFilterDTO filters, Pageable pageable);
     OfertaResponseDTO buscarPorId(Long id);
     List<OfertaResponseDTO> listarPorLoja(Long lojaId);
     List<OfertaResponseDTO> listarPorProduto(Long produtoId);

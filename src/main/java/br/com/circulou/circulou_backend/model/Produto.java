@@ -62,8 +62,10 @@ public class Produto {
     @Column(name = "codigo_barras", unique = true, length = 50)
     private String codigoBarras;
 
-    // TODO: Ponto de extensão para futura implementação de Categoria
-    // A Categoria será um agregado próprio vinculado ao Produto em sprints futuras.
+    @Size(max = 100)
+    @Column(length = 100)
+    private String categoria;
+
     @Size(max = 255)
     @Column(name = "imagem_principal", length = 255)
     private String imagemPrincipal;

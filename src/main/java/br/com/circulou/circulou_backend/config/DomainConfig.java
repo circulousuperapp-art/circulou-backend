@@ -1,5 +1,6 @@
 package br.com.circulou.circulou_backend.config;
 
+import br.com.circulou.circulou_backend.model.CorridaStatusPolicy;
 import br.com.circulou.circulou_backend.model.PedidoStatusPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,5 +11,10 @@ public class DomainConfig {
     @Bean
     public PedidoStatusPolicy pedidoStatusPolicy() {
         return new PedidoStatusPolicy();
+    }
+
+    @Bean
+    public CorridaStatusPolicy corridaStatusPolicy() {
+        return new CorridaStatusPolicy();
     }
 }

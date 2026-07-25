@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.kafka.core.KafkaTemplate;
 
 @Configuration
@@ -19,39 +20,42 @@ public class EventPublisherConfig {
 
     @Bean
     @ConditionalOnProperty(name = "circulou.message.publisher.type", havingValue = "kafka")
-    public MessagePublisherPort kafkaMessagePublisher(KafkaTemplate<String, Object> kafkaTemplate, ObjectMapper objectMapper) {
+    public KafkaEventPublisherAdapter kafkaMessagePublisher(KafkaTemplate<String, Object> kafkaTemplate, ObjectMapper objectMapper) {
         return new KafkaEventPublisherAdapter(kafkaTemplate, objectMapper);
     }
 
     @Bean
     @ConditionalOnProperty(name = "circulou.message.publisher.type", havingValue = "spring")
-    public MessagePublisherPort springMessagePublisher(ApplicationEventPublisher applicationEventPublisher) {
+    public SpringEventPublisherAdapter springMessagePublisher(ApplicationEventPublisher applicationEventPublisher) {
         return new SpringEventPublisherAdapter(applicationEventPublisher);
     }
 
     @Bean
     @ConditionalOnProperty(name = "circulou.message.publisher.type", havingValue = "logging")
-    public MessagePublisherPort loggingMessagePublisher() {
+    public LoggingEventPublisherAdapter loggingMessagePublisher() {
         return new LoggingEventPublisherAdapter();
     }
 
     // --- EventPublisherPort Beans (Domain Side / Application Services) ---
 
     @Bean
+    @Primary
     @ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "kafka")
-    public EventPublisherPort kafkaEventPublisher(KafkaTemplate<String, Object> kafkaTemplate, ObjectMapper objectMapper) {
+    public EventPublisherPort kafkaEventPublisherPort(KafkaTemplate<String, Object> kafkaTemplate, ObjectMapper objectMapper) {
         return new KafkaEventPublisherAdapter(kafkaTemplate, objectMapper);
     }
 
     @Bean
+    @Primary
     @ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "spring")
-    public EventPublisherPort springEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
+    public EventPublisherPort springEventPublisherPort(ApplicationEventPublisher applicationEventPublisher) {
         return new SpringEventPublisherAdapter(applicationEventPublisher);
     }
 
     @Bean
+    @Primary
     @ConditionalOnProperty(name = "circulou.event.publisher.type", havingValue = "logging")
-    public EventPublisherPort loggingEventPublisher() {
+    public EventPublisherPort loggingEventPublisherPort() {
         return new LoggingEventPublisherAdapter();
     }
 }
