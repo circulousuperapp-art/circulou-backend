@@ -4,6 +4,7 @@ import br.com.circulou.circulou_backend.exception.BusinessException;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.OfertaService;
 import br.com.circulou.circulou_backend.service.PedidoService;
@@ -25,6 +26,7 @@ public class PedidoServiceImpl implements PedidoService {
     private final OfertaService ofertaService;
     private final PedidoStatusPolicy statusPolicy;
     private final EventPublisherPort eventPublisher;
+    private final MetricsPort metricsPort;
 
     @Value("${circulou.pedido.janela-cancelamento-minutos:1}")
     private Integer janelaCancelamentoMinutos;
@@ -32,11 +34,13 @@ public class PedidoServiceImpl implements PedidoService {
     public PedidoServiceImpl(PedidoRepositoryPort pedidoRepositoryPort,
                              OfertaService ofertaService,
                              PedidoStatusPolicy statusPolicy,
-                             EventPublisherPort eventPublisher) {
+                             EventPublisherPort eventPublisher,
+                             MetricsPort metricsPort) {
         this.pedidoRepositoryPort = pedidoRepositoryPort;
         this.ofertaService = ofertaService;
         this.statusPolicy = statusPolicy;
         this.eventPublisher = eventPublisher;
+        this.metricsPort = metricsPort;
     }
 
     @Override
@@ -87,6 +91,8 @@ public class PedidoServiceImpl implements PedidoService {
 
         // Publicar eventos capturados
         eventPublisher.publish(pedidoSalvo.pullDomainEvents());
+
+        metricsPort.incrementarPedidosCriados();
 
         return pedidoSalvo;
     }

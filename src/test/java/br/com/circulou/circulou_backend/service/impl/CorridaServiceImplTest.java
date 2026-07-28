@@ -6,6 +6,7 @@ import br.com.circulou.circulou_backend.model.CorridaStatus;
 import br.com.circulou.circulou_backend.model.CorridaStatusPolicy;
 import br.com.circulou.circulou_backend.port.out.CorridaRepositoryPort;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +33,9 @@ class CorridaServiceImplTest {
     @Mock
     private CorridaStatusPolicy statusPolicy;
 
+    @Mock
+    private MetricsPort metricsPort;
+
     @InjectMocks
     private CorridaServiceImpl service;
 
@@ -46,6 +50,7 @@ class CorridaServiceImplTest {
         assertThat(salva.getStatus()).isEqualTo(CorridaStatus.SOLICITADA);
         assertThat(salva.getDataCriacao()).isNotNull();
         verify(repositoryPort).save(corrida);
+        verify(metricsPort).incrementarCorridasCriadas();
     }
 
     @Test

@@ -6,6 +6,7 @@ import br.com.circulou.circulou_backend.model.CorridaStatus;
 import br.com.circulou.circulou_backend.model.CorridaStatusPolicy;
 import br.com.circulou.circulou_backend.port.out.CorridaRepositoryPort;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.service.CorridaService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,13 +23,16 @@ public class CorridaServiceImpl implements CorridaService {
     private final CorridaRepositoryPort repositoryPort;
     private final EventPublisherPort eventPublisher;
     private final CorridaStatusPolicy statusPolicy;
+    private final MetricsPort metricsPort;
 
     public CorridaServiceImpl(CorridaRepositoryPort repositoryPort, 
                               EventPublisherPort eventPublisher,
-                              CorridaStatusPolicy statusPolicy) {
+                              CorridaStatusPolicy statusPolicy,
+                              MetricsPort metricsPort) {
         this.repositoryPort = repositoryPort;
         this.eventPublisher = eventPublisher;
         this.statusPolicy = statusPolicy;
+        this.metricsPort = metricsPort;
     }
 
     @Override
@@ -62,7 +66,9 @@ public class CorridaServiceImpl implements CorridaService {
     public Corrida salvar(Corrida corrida) {
         corrida.setDataCriacao(LocalDateTime.now());
         corrida.setStatus(CorridaStatus.SOLICITADA);
-        return repositoryPort.save(corrida);
+        Corrida salva = repositoryPort.save(corrida);
+        metricsPort.incrementarCorridasCriadas();
+        return salva;
     }
 
     @Override

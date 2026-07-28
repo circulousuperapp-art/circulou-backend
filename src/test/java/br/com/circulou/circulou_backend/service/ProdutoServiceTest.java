@@ -3,6 +3,7 @@ package br.com.circulou.circulou_backend.service;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Loja;
 import br.com.circulou.circulou_backend.model.Produto;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.port.out.ProdutoRepositoryPort;
 import br.com.circulou.circulou_backend.service.impl.ProdutoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,9 @@ class ProdutoServiceTest {
 
     @Mock
     private ProdutoRepositoryPort produtoRepositoryPort;
+
+    @Mock
+    private MetricsPort metricsPort;
 
     @InjectMocks
     private ProdutoServiceImpl produtoService;
@@ -89,6 +93,7 @@ class ProdutoServiceTest {
 
         assertNotNull(resultado);
         verify(produtoRepositoryPort, times(1)).save(any(Produto.class));
+        verify(metricsPort, times(1)).incrementarProdutosCadastrados();
     }
 
     @Test

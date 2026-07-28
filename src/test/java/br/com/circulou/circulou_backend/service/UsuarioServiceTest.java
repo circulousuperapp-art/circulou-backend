@@ -2,6 +2,7 @@ package br.com.circulou.circulou_backend.service;
 
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Usuario;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.port.out.UsuarioRepositoryPort;
 import br.com.circulou.circulou_backend.service.impl.UsuarioServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,9 @@ class UsuarioServiceTest {
 
     @Mock
     private UsuarioRepositoryPort usuarioRepositoryPort;
+
+    @Mock
+    private MetricsPort metricsPort;
 
     @InjectMocks
     private UsuarioServiceImpl usuarioService;
@@ -83,6 +87,7 @@ class UsuarioServiceTest {
         assertNotNull(resultado);
         assertEquals(usuario.getNome(), resultado.getNome());
         verify(usuarioRepositoryPort, times(1)).save(any(Usuario.class));
+        verify(metricsPort, times(1)).incrementarUsuariosCadastrados();
     }
 
     @Test

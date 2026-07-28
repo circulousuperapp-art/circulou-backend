@@ -3,6 +3,7 @@ package br.com.circulou.circulou_backend.service;
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Loja;
 import br.com.circulou.circulou_backend.port.out.LojaRepositoryPort;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.service.impl.LojaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +25,9 @@ class LojaServiceTest {
 
     @Mock
     private LojaRepositoryPort lojaRepositoryPort;
+
+    @Mock
+    private MetricsPort metricsPort;
 
     @InjectMocks
     private LojaServiceImpl lojaService;
@@ -82,6 +86,7 @@ class LojaServiceTest {
         assertNotNull(resultado);
         assertEquals(loja.getNome(), resultado.getNome());
         verify(lojaRepositoryPort, times(1)).save(any(Loja.class));
+        verify(metricsPort, times(1)).incrementarLojasCadastradas();
     }
 
     @Test

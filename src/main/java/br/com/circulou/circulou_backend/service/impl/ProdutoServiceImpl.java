@@ -2,6 +2,7 @@ package br.com.circulou.circulou_backend.service.impl;
 
 import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.Produto;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.port.out.ProdutoRepositoryPort;
 import br.com.circulou.circulou_backend.service.ProdutoService;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,11 @@ import java.util.List;
 public class ProdutoServiceImpl implements ProdutoService {
 
     private final ProdutoRepositoryPort produtoRepositoryPort;
+    private final MetricsPort metricsPort;
 
-    public ProdutoServiceImpl(ProdutoRepositoryPort produtoRepositoryPort) {
+    public ProdutoServiceImpl(ProdutoRepositoryPort produtoRepositoryPort, MetricsPort metricsPort) {
         this.produtoRepositoryPort = produtoRepositoryPort;
+        this.metricsPort = metricsPort;
     }
 
     @Override
@@ -32,7 +35,9 @@ public class ProdutoServiceImpl implements ProdutoService {
     @Override
     @Transactional
     public Produto salvar(Produto produto) {
-        return produtoRepositoryPort.save(produto);
+        Produto salvo = produtoRepositoryPort.save(produto);
+        metricsPort.incrementarProdutosCadastrados();
+        return salvo;
     }
 
     @Override

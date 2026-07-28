@@ -5,6 +5,7 @@ import br.com.circulou.circulou_backend.exception.ResourceNotFoundException;
 import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.model.PedidoStatus;
 import br.com.circulou.circulou_backend.port.out.EventPublisherPort;
+import br.com.circulou.circulou_backend.port.out.MetricsPort;
 import br.com.circulou.circulou_backend.port.out.PedidoRepositoryPort;
 import br.com.circulou.circulou_backend.service.impl.PedidoServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,9 @@ class PedidoServiceTest {
     @Mock
     private EventPublisherPort eventPublisher;
 
+    @Mock
+    private MetricsPort metricsPort;
+
     private final PedidoStatusPolicy statusPolicy = new PedidoStatusPolicy();
 
     private PedidoServiceImpl pedidoService;
@@ -52,7 +56,7 @@ class PedidoServiceTest {
 
     @BeforeEach
     void setUp() {
-        pedidoService = new PedidoServiceImpl(pedidoRepositoryPort, ofertaService, statusPolicy, eventPublisher);
+        pedidoService = new PedidoServiceImpl(pedidoRepositoryPort, ofertaService, statusPolicy, eventPublisher, metricsPort);
         ReflectionTestUtils.setField(pedidoService, "janelaCancelamentoMinutos", 1);
 
         usuario = new Usuario();
@@ -144,6 +148,7 @@ class PedidoServiceTest {
         verify(ofertaService, times(1)).registrarVenda(eq(1L), eq(2));
         verify(pedidoRepositoryPort, times(1)).save(any(Pedido.class));
         verify(eventPublisher, times(1)).publish(anyList());
+        verify(metricsPort, times(1)).incrementarPedidosCriados();
     }
 
     @Test
