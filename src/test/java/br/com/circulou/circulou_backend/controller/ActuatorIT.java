@@ -87,12 +87,12 @@ class ActuatorIT extends BaseIntegrationTest {
     }
 
     @Test
-    @DisplayName("Deve retornar 401 ao acessar prometheus sem autenticação")
-    void deveRetornar401AoAcessarPrometheusSemAutenticacao() {
+    @DisplayName("Deve acessar prometheus sem autenticação")
+    void deveAcessarPrometheusSemAutenticacao() {
         webTestClient.get().uri("/actuator/prometheus")
                 .accept(MediaType.parseMediaType("text/plain; version=0.0.4"))
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus().isOk();
     }
 
     @Test
