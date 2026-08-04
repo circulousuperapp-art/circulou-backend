@@ -1,120 +1,185 @@
-<p align="center">
-  <img src="docs/images/README-Hero-en.png" alt="Circulou Backend">
-</p>
-
 # 🚀 Circulou Backend
 
-## Enterprise-grade backend built with Java 21
+Enterprise-grade backend for the Circulou Super App, designed with modern software engineering practices to deliver a scalable, secure and maintainable platform for mobility and smart shopping.
 
-> Corporate backend developed with **Java 21** and **Spring Boot**, following **Hexagonal Architecture**, **Domain-Driven Design (DDD)** and **SOLID** principles.
-
-Circulou is a modern mobility and smart shopping platform designed using enterprise software engineering practices.
-
-This project demonstrates real-world backend architecture, including Hexagonal Architecture, Domain-Driven Design (DDD), JWT Authentication, Docker, PostgreSQL, Testcontainers, GitHub Actions and production-oriented design principles.
+<p align="center">
+<img src="docs/images/GitHub-Profile-Readme-V3.png" width="100%">
+</p>
 
 ---
 
-## 📌 Project Overview
+# 📖 About the Project
 
-Circulou connects customers, drivers and stores through a single platform, enabling intelligent shopping and mobility experiences.
+Circulou is a long-term software engineering project created to solve a real-world problem while serving as a professional backend portfolio.
 
-The backend is designed to support:
+The platform connects customers, drivers and stores through a single ecosystem, enabling purchases to be synchronized with users' travel routes, reducing waiting time and improving the shopping experience.
 
-- Customer Management
-- Driver Management
-- Store Management
-- Product Catalog
-- Commercial Offers
-- Order Management
-- Secure Authentication
-- Future Payment Integration
-- Cloud Scalability
+Although the product vision continues to evolve, the primary goal of this repository is to demonstrate production-ready backend engineering using modern architectural patterns and industry best practices.
 
 ---
 
-## 🏗 Architecture
+# 🏗 Architecture
 
-The project follows **Hexagonal Architecture (Ports & Adapters)** combined with **Domain-Driven Design (DDD)**.
+The project follows **Hexagonal Architecture (Ports & Adapters)** combined with:
 
-### Main Benefits
-
+- Domain-Driven Design (DDD)
+- SOLID Principles
+- Clean Architecture
 - Separation of Concerns
-- Low Coupling
 - High Cohesion
-- Testability
-- Scalability
-- Maintainability
+- Low Coupling
+
+Current architectural flow:
+
+Controller
+↓
+Facade
+↓
+Use Case
+↓
+Service
+↓
+Repository Port
+↓
+Repository Adapter
+↓
+Spring Data JPA
+↓
+PostgreSQL
 
 ---
 
-## ⚙️ Technology Stack
+# ⚙ Technology Stack
+
+### Backend
 
 - Java 21
-- Spring Boot
+- Spring Boot 3.5
 - Spring Security
 - JWT Authentication
 - Spring Data JPA
+- Hibernate
+- Bean Validation
+- MapStruct
+- Lombok
+
+### Database
+
 - PostgreSQL
-- Maven
-- Docker
-- Testcontainers
+- Flyway
+
+### Testing
+
 - JUnit 5
 - Mockito
+- Testcontainers
 - JaCoCo
+
+### DevOps
+
+- Docker
+- Docker Compose
 - GitHub Actions
+- Maven
+
+### Observability
+
+- Spring Boot Actuator
+- Micrometer
+- Prometheus
+- Grafana
+- Kafka UI
+
+### Documentation
+
 - Swagger / OpenAPI
+- ADR Documentation
+- Markdown
 
 ---
 
-## 🔒 Security
+# 🔐 Security
 
-Implemented features:
+Implemented features include:
 
 - JWT Authentication
-- BCrypt Password Hashing
-- Stateless Security
-- Bean Validation
+- BCrypt Password Encryption
+- Stateless Authentication
+- Custom Authentication Entry Point
+- Custom Access Denied Handler
 - Global Exception Handling
+- Bean Validation
 
 ---
 
-## 🧪 Quality
+# 📦 Main Modules
 
-Current quality standards include:
+Current business domains and infrastructure include:
 
-- Unit Tests
-- Integration Tests
+- Authentication
+- User Management
+- Customer Profile
+- Driver Profile
+- Store Profile
+- Product Catalog
+- Commercial Offers
+- Orders
+- Order Items
+- Mobility
+- Event Infrastructure
+- Observability
+- Infrastructure
+
+---
+
+# 🧪 Quality
+
+Current engineering practices:
+
+- Unit Testing
+- Integration Testing
 - Testcontainers
 - JaCoCo Coverage
-- Maven Build Validation
+- Dockerized Environment
+- Continuous Integration
+- Architecture Decision Records (ADR)
 
-Every push is automatically validated using GitHub Actions.
+Every push is automatically validated by GitHub Actions before becoming part of the project's history.
 
 ---
 
-## 🐳 Running with Docker
+# 🐳 Running with Docker
 
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
 ---
 
-## ▶ Running Locally
+# ▶ Running Locally
 
-Requirements:
+Requirements
 
 - Java 21
-- Maven
+- Docker Desktop
 - PostgreSQL
 
-Clone:
+Clone
 
 ```bash
 git clone https://github.com/circulousuperapp-art/circulou-backend.git
+cd circulou-backend
 ```
 
-Run:
+# Start infrastructure
+
+```bash
+docker compose up -d
+```
+
+Wait until PostgreSQL and Kafka become healthy.
+
+# Run backend
 
 ```bash
 ./mvnw spring-boot:run
@@ -122,36 +187,66 @@ Run:
 
 ---
 
-## 🧪 Running Tests
+# 🧪 Running Tests
+
+Recommended command
 
 ```bash
-./mvnw test
+./mvnw clean verify
 ```
 
 ---
 
-## 📖 API Documentation
+# 📖 API & Observability
 
-Swagger UI
+### Swagger UI
 
-```
+```text
 http://localhost:8080/swagger-ui/index.html
 ```
 
+### Actuator
+
+```text
+http://localhost:8080/actuator
+```
+
+### Prometheus
+
+```text
+http://localhost:9090
+```
+
+### Grafana
+
+```text
+http://localhost:3000
+```
+
 ---
 
-## 📄 License
+# 📈 Project Vision
 
-This project is being developed as a professional portfolio and learning project.
+Circulou is much more than a study project.
+
+It represents an ongoing software engineering journey where architecture, backend development, software quality, DevOps and product engineering evolve together.
+
+Each sprint improves both the platform and the engineering practices behind it.
+
+The project is actively evolving toward a production-ready MVP while continuously adopting modern software engineering practices.
 
 ---
 
-## 👤 Author
+# 👨‍💻 Author
 
-**Pedro Arthur**
+Pedro Arthur
 
 Backend Software Engineer
 
-LinkedIn:
+LinkedIn
 
-https://www.linkedin.com/in/pedro-arthur-711932373/
+https://www.linkedin.com/in/pedroarthurdev/
+
+GitHub
+
+https://github.com/circulousuperapp-art

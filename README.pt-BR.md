@@ -1,120 +1,185 @@
-<p align="center">
-  <img src="docs/images/README-Hero-pt.png" alt="Circulou Backend">
-</p>
-
 # 🚀 Circulou Backend
 
-## Backend corporativo desenvolvido com Java 21
+Backend empresarial do Circulou Super App, desenvolvido utilizando práticas modernas de Engenharia de Software para entregar uma plataforma escalável, segura e preparada para evolução contínua.
 
-> Backend corporativo desenvolvido com **Java 21** e **Spring Boot**, utilizando **Arquitetura Hexagonal**, **Domain-Driven Design (DDD)** e princípios **SOLID**.
-
-O Circulou é uma plataforma moderna de mobilidade e compras inteligentes desenvolvida utilizando práticas de engenharia de software voltadas para aplicações corporativas.
-
-Este projeto demonstra uma arquitetura backend real, utilizando Arquitetura Hexagonal, DDD, autenticação JWT, Docker, PostgreSQL, Testcontainers, GitHub Actions e princípios voltados para ambientes de produção.
+<p align="center">
+<img src="docs/images/GitHub-Profile-Readme-V3-PT.png" width="100%">
+</p>
 
 ---
 
-## 📌 Visão Geral do Projeto
+# 📖 Sobre o Projeto
 
-O Circulou conecta clientes, motoristas e lojas em uma única plataforma, oferecendo uma experiência inteligente de mobilidade e compras.
+O Circulou é um projeto de Engenharia de Software desenvolvido para solucionar um problema real enquanto serve como portfólio profissional de Backend.
 
-O backend foi projetado para suportar:
+A plataforma conecta clientes, motoristas e estabelecimentos em um único ecossistema, permitindo sincronizar compras com o deslocamento do usuário, reduzindo tempo de espera e melhorando a experiência de compra.
 
-- Gestão de Clientes
-- Gestão de Motoristas
-- Gestão de Lojistas
-- Catálogo de Produtos
-- Ofertas Comerciais
-- Gestão de Pedidos
-- Autenticação Segura
-- Integração futura com meios de pagamento
-- Escalabilidade para ambientes em nuvem
+Além da visão de produto, este repositório demonstra a construção de um backend utilizando arquitetura moderna, boas práticas e padrões utilizados em ambientes corporativos.
 
 ---
 
-## 🏗 Arquitetura
+# 🏗 Arquitetura
 
-O projeto segue os princípios da **Arquitetura Hexagonal (Ports & Adapters)** combinada com **Domain-Driven Design (DDD)**.
+O projeto segue **Arquitetura Hexagonal (Ports & Adapters)** combinada com:
 
-### Principais Benefícios
+- Domain-Driven Design (DDD)
+- Princípios SOLID
+- Clean Architecture
+- Separação de Responsabilidades
+- Alta Coesão
+- Baixo Acoplamento
 
-- Separação de responsabilidades
-- Baixo acoplamento
-- Alta coesão
-- Facilidade de testes
-- Escalabilidade
-- Facilidade de manutenção
+Fluxo arquitetural atual:
+
+Controller
+↓
+Facade
+↓
+Use Case
+↓
+Service
+↓
+Repository Port
+↓
+Repository Adapter
+↓
+Spring Data JPA
+↓
+PostgreSQL
 
 ---
 
-## ⚙️ Tecnologias
+# ⚙ Stack Tecnológica
+
+### Backend
 
 - Java 21
-- Spring Boot
+- Spring Boot 3.5
 - Spring Security
-- JWT Authentication
+- JWT
 - Spring Data JPA
+- Hibernate
+- Bean Validation
+- MapStruct
+- Lombok
+
+### Banco de Dados
+
 - PostgreSQL
-- Maven
-- Docker
-- Testcontainers
+- Flyway
+
+### Testes
+
 - JUnit 5
 - Mockito
+- Testcontainers
 - JaCoCo
+
+### DevOps
+
+- Docker
+- Docker Compose
 - GitHub Actions
+- Maven
+
+### Observabilidade
+
+- Spring Boot Actuator
+- Micrometer
+- Prometheus
+- Grafana
+- Kafka UI
+
+### Documentação
+
 - Swagger / OpenAPI
+- ADRs
+- Markdown
 
 ---
 
-## 🔒 Segurança
+# 🔐 Segurança
 
-Recursos implementados:
+O projeto implementa:
 
 - Autenticação JWT
 - Criptografia BCrypt
 - Segurança Stateless
-- Bean Validation
+- Authentication Entry Point customizado
+- Access Denied Handler customizado
 - Tratamento Global de Exceções
+- Bean Validation
 
 ---
 
-## 🧪 Qualidade
+# 📦 Principais Módulos
 
-O projeto possui:
+Domínios e infraestrutura atualmente implementados:
+
+- Autenticação
+- Gestão de Usuários
+- Perfil de Cliente
+- Perfil de Motorista
+- Perfil de Lojista
+- Catálogo de Produtos
+- Ofertas Comerciais
+- Pedidos
+- Itens do Pedido
+- Mobilidade
+- Infraestrutura de Eventos
+- Observabilidade
+- Infraestrutura
+
+---
+
+# 🧪 Qualidade
+
+Práticas adotadas atualmente:
 
 - Testes Unitários
 - Testes de Integração
 - Testcontainers
 - Cobertura JaCoCo
-- Validação de Build com Maven
+- Ambiente Dockerizado
+- Integração Contínua
+- Architecture Decision Records (ADR)
 
-Todo push é validado automaticamente através do GitHub Actions.
+Todo push é validado automaticamente pelo GitHub Actions antes de integrar o histórico do projeto.
 
 ---
 
-## 🐳 Executando com Docker
+# 🐳 Executando com Docker
 
 ```bash
-docker compose up --build
+docker compose up -d
 ```
 
 ---
 
-## ▶ Executando Localmente
+# ▶ Executando Localmente
 
-Pré-requisitos:
+Requisitos
 
 - Java 21
-- Maven
+- Docker Desktop
 - PostgreSQL
 
-Clone o repositório:
+Clone
 
 ```bash
 git clone https://github.com/circulousuperapp-art/circulou-backend.git
+cd circulou-backend
 ```
 
-Execute:
+# Inicializar infraestrutura
+
+```bash
+docker compose up -d
+```
+
+Aguarde PostgreSQL e Kafka ficarem saudáveis.
+
+# Executar backend
 
 ```bash
 ./mvnw spring-boot:run
@@ -122,36 +187,66 @@ Execute:
 
 ---
 
-## 🧪 Executando os Testes
+# 🧪 Executando os Testes
+
+Comando recomendado
 
 ```bash
-./mvnw test
+./mvnw clean verify
 ```
 
 ---
 
-## 📖 Documentação da API
+# 📖 API & Observabilidade
 
-Swagger UI
+### Swagger UI
 
-```
+```text
 http://localhost:8080/swagger-ui/index.html
 ```
 
+### Actuator
+
+```text
+http://localhost:8080/actuator
+```
+
+### Prometheus
+
+```text
+http://localhost:9090
+```
+
+### Grafana
+
+```text
+http://localhost:3000
+```
+
 ---
 
-## 📄 Licença
+# 📈 Visão do Projeto
 
-Este projeto está sendo desenvolvido como portfólio profissional e projeto de aprendizado.
+O Circulou vai além de um projeto acadêmico.
+
+Ele representa uma jornada contínua de Engenharia de Software, onde arquitetura, desenvolvimento backend, qualidade, DevOps e engenharia de produto evoluem juntos a cada Sprint.
+
+Cada entrega fortalece tanto a plataforma quanto a maturidade técnica aplicada ao projeto.
+
+O projeto evolui continuamente em direção a um MVP preparado para produção, incorporando práticas modernas de engenharia de software.
 
 ---
 
-## 👤 Autor
+# 👨‍💻 Autor
 
-**Pedro Arthur**
+Pedro Arthur
 
 Backend Software Engineer
 
-LinkedIn:
+LinkedIn
 
-https://www.linkedin.com/in/pedro-arthur-711932373/
+https://www.linkedin.com/in/pedroarthurdev/
+
+GitHub
+
+https://github.com/circulousuperapp-art
