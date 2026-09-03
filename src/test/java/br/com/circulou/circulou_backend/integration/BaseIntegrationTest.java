@@ -46,6 +46,8 @@ public abstract class BaseIntegrationTest {
 
     @BeforeEach
     void clearDatabase() {
+        jdbcTemplate.execute("DELETE FROM jornada_parada");
+        jdbcTemplate.execute("DELETE FROM jornada");
         jdbcTemplate.execute("DELETE FROM item_pedido");
         jdbcTemplate.execute("DELETE FROM pedido");
         jdbcTemplate.execute("DELETE FROM oferta");
