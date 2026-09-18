@@ -1,6 +1,8 @@
 package br.com.circulou.circulou_backend.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,9 +40,15 @@ public class CorridaRequestDTO {
     @Schema(description = "Estado de origem", example = "SP")
     private String origemEstado;
 
+    @NotNull
+    @DecimalMin("-90.0")
+    @DecimalMax("90.0")
     @Schema(description = "Latitude de origem")
     private Double origemLatitude;
 
+    @NotNull
+    @DecimalMin("-180.0")
+    @DecimalMax("180.0")
     @Schema(description = "Longitude de origem")
     private Double origemLongitude;
 
@@ -59,9 +67,15 @@ public class CorridaRequestDTO {
     @Schema(description = "Estado de destino", example = "SP")
     private String destinoEstado;
 
+    @NotNull
+    @DecimalMin("-90.0")
+    @DecimalMax("90.0")
     @Schema(description = "Latitude de destino")
     private Double destinoLatitude;
 
+    @NotNull
+    @DecimalMin("-180.0")
+    @DecimalMax("180.0")
     @Schema(description = "Longitude de destino")
     private Double destinoLongitude;
 

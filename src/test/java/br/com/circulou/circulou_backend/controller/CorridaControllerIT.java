@@ -73,8 +73,12 @@ class CorridaControllerIT extends BaseIntegrationTest {
         requestDTO.setClienteId(clienteId);
         requestDTO.setOrigemLogradouro("Rua A");
         requestDTO.setOrigemNumero("100");
+        requestDTO.setOrigemLatitude(-23.5505);
+        requestDTO.setOrigemLongitude(-46.6333);
         requestDTO.setDestinoLogradouro("Rua B");
         requestDTO.setDestinoNumero("200");
+        requestDTO.setDestinoLatitude(-23.5596);
+        requestDTO.setDestinoLongitude(-46.6583);
         requestDTO.setValorEstimado(new BigDecimal("30.00"));
 
         MvcResult resPost = mockMvc.perform(post("/corridas")
@@ -134,8 +138,12 @@ class CorridaControllerIT extends BaseIntegrationTest {
         requestDTO.setClienteId(clienteId);
         requestDTO.setOrigemLogradouro("Rua A");
         requestDTO.setOrigemNumero("100");
+        requestDTO.setOrigemLatitude(-23.5505);
+        requestDTO.setOrigemLongitude(-46.6333);
         requestDTO.setDestinoLogradouro("Rua B");
         requestDTO.setDestinoNumero("200");
+        requestDTO.setDestinoLatitude(-23.5596);
+        requestDTO.setDestinoLongitude(-46.6583);
         requestDTO.setValorEstimado(new BigDecimal("30.00"));
 
         MvcResult resPost = mockMvc.perform(post("/corridas")
@@ -170,5 +178,53 @@ class CorridaControllerIT extends BaseIntegrationTest {
                     CorridaResponseDTO c = objectMapper.readValue(result.getResponse().getContentAsString(), CorridaResponseDTO.class);
                     assertThat(c.getStatus()).isEqualTo(esperado);
                 });
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao solicitar corrida com coordenadas ausentes")
+    void deveFalharCoordenadasAusentes() throws Exception {
+        CorridaRequestDTO requestDTO = new CorridaRequestDTO();
+        requestDTO.setClienteId(clienteId);
+        // Coordenadas propositalmente ausentes
+
+        mockMvc.perform(post("/corridas")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao solicitar corrida com latitude inválida")
+    void deveFalharLatitudeInvalida() throws Exception {
+        CorridaRequestDTO requestDTO = new CorridaRequestDTO();
+        requestDTO.setClienteId(clienteId);
+        requestDTO.setOrigemLatitude(95.0); // Inválido (> 90)
+        requestDTO.setOrigemLongitude(-46.6333);
+        requestDTO.setDestinoLatitude(-23.5596);
+        requestDTO.setDestinoLongitude(-46.6583);
+
+        mockMvc.perform(post("/corridas")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deve falhar ao solicitar corrida com longitude inválida")
+    void deveFalharLongitudeInvalida() throws Exception {
+        CorridaRequestDTO requestDTO = new CorridaRequestDTO();
+        requestDTO.setClienteId(clienteId);
+        requestDTO.setOrigemLatitude(-23.5505);
+        requestDTO.setOrigemLongitude(-190.0); // Inválido (< -180)
+        requestDTO.setDestinoLatitude(-23.5596);
+        requestDTO.setDestinoLongitude(-46.6583);
+
+        mockMvc.perform(post("/corridas")
+                        .header("Authorization", token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(requestDTO)))
+                .andExpect(status().isBadRequest());
     }
 }
