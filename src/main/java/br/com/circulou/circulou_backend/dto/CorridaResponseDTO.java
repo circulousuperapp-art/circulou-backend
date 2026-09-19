@@ -49,4 +49,10 @@ public class CorridaResponseDTO {
 
     @Schema(description = "Destino formatado")
     private String destino;
+
+    @Schema(description = "Distância estimada em metros", example = "5234")
+    private Integer distanciaMetros;
+
+    @Schema(description = "Duração estimada em segundos", example = "742")
+    private Integer duracaoSegundos;
 }

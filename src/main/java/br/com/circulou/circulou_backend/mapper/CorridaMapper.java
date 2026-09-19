@@ -38,7 +38,9 @@ public class CorridaMapper {
                 corrida.getValorEstimado(),
                 corrida.getValorFinal(),
                 origemFormatada,
-                destinoFormatado
+                destinoFormatado,
+                corrida.getDistanciaEstimadaMetros(),
+                corrida.getDuracaoEstimadaSegundos()
         );
     }
 

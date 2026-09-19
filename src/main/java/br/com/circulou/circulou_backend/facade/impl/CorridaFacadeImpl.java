@@ -9,7 +9,10 @@ import br.com.circulou.circulou_backend.model.CorridaStatus;
 import br.com.circulou.circulou_backend.model.MotoristaProfile;
 import br.com.circulou.circulou_backend.model.Usuario;
 import br.com.circulou.circulou_backend.port.in.CorridaUseCase;
+import br.com.circulou.circulou_backend.port.out.GeoCoordinate;
 import br.com.circulou.circulou_backend.port.out.MotoristaProfileRepositoryPort;
+import br.com.circulou.circulou_backend.port.out.RouteData;
+import br.com.circulou.circulou_backend.port.out.RoutePort;
 import br.com.circulou.circulou_backend.port.out.UsuarioRepositoryPort;
 import br.com.circulou.circulou_backend.service.CorridaService;
 import org.springframework.data.domain.Page;
@@ -27,15 +30,18 @@ public class CorridaFacadeImpl implements CorridaUseCase {
     private final UsuarioRepositoryPort usuarioRepositoryPort;
     private final MotoristaProfileRepositoryPort motoristaRepositoryPort;
     private final CorridaMapper corridaMapper;
+    private final RoutePort routePort;
 
     public CorridaFacadeImpl(CorridaService corridaService,
                              UsuarioRepositoryPort usuarioRepositoryPort,
                              MotoristaProfileRepositoryPort motoristaRepositoryPort,
-                             CorridaMapper corridaMapper) {
+                             CorridaMapper corridaMapper,
+                             RoutePort routePort) {
         this.corridaService = corridaService;
         this.usuarioRepositoryPort = usuarioRepositoryPort;
         this.motoristaRepositoryPort = motoristaRepositoryPort;
         this.corridaMapper = corridaMapper;
+        this.routePort = routePort;
     }
 
     @Override
@@ -75,13 +81,19 @@ public class CorridaFacadeImpl implements CorridaUseCase {
     }
 
     @Override
-    @Transactional
     public CorridaResponseDTO solicitar(CorridaRequestDTO dto) {
         Corrida corrida = corridaMapper.toEntity(dto);
         Usuario cliente = usuarioRepositoryPort.findById(dto.getClienteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado"));
         corrida.setCliente(cliente);
-        
+
+        GeoCoordinate origem = new GeoCoordinate(dto.getOrigemLatitude(), dto.getOrigemLongitude());
+        GeoCoordinate destino = new GeoCoordinate(dto.getDestinoLatitude(), dto.getDestinoLongitude());
+
+        RouteData routeData = routePort.calcularRota(origem, destino);
+        corrida.setDistanciaEstimadaMetros(routeData.distanciaMetros());
+        corrida.setDuracaoEstimadaSegundos(routeData.duracaoSegundos());
+
         Corrida salva = corridaService.salvar(corrida);
         return corridaMapper.toResponseDTO(salva);
     }

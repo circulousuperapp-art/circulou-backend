@@ -4,23 +4,28 @@ import br.com.circulou.circulou_backend.dto.CorridaRequestDTO;
 import br.com.circulou.circulou_backend.dto.CorridaResponseDTO;
 import br.com.circulou.circulou_backend.dto.UsuarioRequestDTO;
 import br.com.circulou.circulou_backend.integration.BaseIntegrationTest;
-import br.com.circulou.circulou_backend.model.CorridaStatus;
-import br.com.circulou.circulou_backend.model.MotoristaProfile;
-import br.com.circulou.circulou_backend.model.StatusDocumentacao;
-import br.com.circulou.circulou_backend.model.StatusPerfil;
-import br.com.circulou.circulou_backend.model.Usuario;
+import br.com.circulou.circulou_backend.model.*;
 import br.com.circulou.circulou_backend.port.out.MotoristaProfileRepositoryPort;
+import br.com.circulou.circulou_backend.port.out.RouteData;
+import br.com.circulou.circulou_backend.port.out.RoutePort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CorridaControllerIT extends BaseIntegrationTest {
@@ -28,12 +33,27 @@ class CorridaControllerIT extends BaseIntegrationTest {
     @Autowired
     private MotoristaProfileRepositoryPort motoristaRepositoryPort;
 
+    @Autowired
+    private RoutePort routePort;
+
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        @Primary
+        public RoutePort routePort() {
+            return mock(RoutePort.class);
+        }
+    }
+
     private String token;
     private Long clienteId;
     private Long motoristaId;
 
     @BeforeEach
     void setUp() throws Exception {
+        // Mock default behavior for routePort
+        when(routePort.calcularRota(any(), any())).thenReturn(new RouteData(5234, 742));
+
         // Criar Cliente
         token = criarUsuarioEObterToken("cliente.mobilidade@test.com");
         clienteId = usuarioRepositoryPort.findByEmail("cliente.mobilidade@test.com").get().getId();
@@ -86,6 +106,8 @@ class CorridaControllerIT extends BaseIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDTO)))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.distanciaMetros").value(5234))
+                .andExpect(jsonPath("$.duracaoSegundos").value(742))
                 .andReturn();
 
         CorridaResponseDTO corrida = objectMapper.readValue(resPost.getResponse().getContentAsString(), CorridaResponseDTO.class);
