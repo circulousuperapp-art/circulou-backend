@@ -34,7 +34,7 @@ public class GoogleRoutesAdapter implements RoutePort {
             GoogleRoutesResponse response = restClient.post()
                     .uri("/directions/v2:computeRoutes")
                     .header("X-Goog-Api-Key", apiKey)
-                    .header("X-Goog-FieldMask", "routes.distanceMeters,routes.duration")
+                    .header("X-Goog-FieldMask", "routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(requestBody)
                     .retrieve()
@@ -78,7 +78,8 @@ public class GoogleRoutesAdapter implements RoutePort {
 
         return new RouteData(
                 route.distanceMeters(),
-                parseDuration(route.duration())
+                parseDuration(route.duration()),
+                route.polyline() != null ? route.polyline().encodedPolyline() : null
         );
     }
 

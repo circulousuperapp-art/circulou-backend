@@ -21,6 +21,7 @@ class CorridaMapperTest {
         Corrida corrida = new Corrida();
         corrida.setDistanciaEstimadaMetros(4226);
         corrida.setDuracaoEstimadaSegundos(774);
+        corrida.setGeometriaRota("encoded-polyline-test");
 
         CorridaResponseDTO response = mapper.toResponseDTO(corrida);
 
@@ -28,6 +29,7 @@ class CorridaMapperTest {
         assertEquals(774, response.getDuracaoSegundos());
         assertEquals("4,2 km", response.getDistanciaFormatada());
         assertEquals("13 min", response.getDuracaoFormatada());
+        assertEquals("encoded-polyline-test", response.getGeometriaRota());
     }
 
     @Test
@@ -35,11 +37,13 @@ class CorridaMapperTest {
         Corrida corrida = new Corrida();
         corrida.setDistanciaEstimadaMetros(null);
         corrida.setDuracaoEstimadaSegundos(null);
+        corrida.setGeometriaRota(null);
 
         CorridaResponseDTO response = mapper.toResponseDTO(corrida);
 
         assertNull(response.getDistanciaFormatada());
         assertNull(response.getDuracaoFormatada());
+        assertNull(response.getGeometriaRota());
     }
 
     @Test

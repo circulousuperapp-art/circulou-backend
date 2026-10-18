@@ -71,7 +71,7 @@ class CorridaFacadeImplTest {
     @DisplayName("Deve solicitar corrida com cálculo de rota e persistir")
     void deveSolicitarCorridaComSucesso() {
         // GIVEN
-        RouteData routeData = new RouteData(5234, 742);
+        RouteData routeData = new RouteData(5234, 742, "encoded-polyline-test");
         when(corridaMapper.toEntity(requestDTO)).thenReturn(corrida);
         when(usuarioRepositoryPort.findById(1L)).thenReturn(Optional.of(cliente));
         when(routePort.calcularRota(any(GeoCoordinate.class), any(GeoCoordinate.class))).thenReturn(routeData);
@@ -88,6 +88,7 @@ class CorridaFacadeImplTest {
         );
         assertThat(corrida.getDistanciaEstimadaMetros()).isEqualTo(5234);
         assertThat(corrida.getDuracaoEstimadaSegundos()).isEqualTo(742);
+        assertThat(corrida.getGeometriaRota()).isEqualTo("encoded-polyline-test");
         verify(corridaService, times(1)).salvar(corrida);
     }
 

@@ -12,9 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -33,17 +31,8 @@ class CorridaControllerIT extends BaseIntegrationTest {
     @Autowired
     private MotoristaProfileRepositoryPort motoristaRepositoryPort;
 
-    @Autowired
+    @MockitoBean
     private RoutePort routePort;
-
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        @Primary
-        public RoutePort routePort() {
-            return mock(RoutePort.class);
-        }
-    }
 
     private String token;
     private Long clienteId;
@@ -52,7 +41,7 @@ class CorridaControllerIT extends BaseIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         // Mock default behavior for routePort
-        when(routePort.calcularRota(any(), any())).thenReturn(new RouteData(5234, 742));
+        when(routePort.calcularRota(any(), any())).thenReturn(new RouteData(5234, 742, "encoded-polyline-test"));
 
         // Criar Cliente
         token = criarUsuarioEObterToken("cliente.mobilidade@test.com");
@@ -108,6 +97,7 @@ class CorridaControllerIT extends BaseIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.distanciaMetros").value(5234))
                 .andExpect(jsonPath("$.duracaoSegundos").value(742))
+                .andExpect(jsonPath("$.geometriaRota").value("encoded-polyline-test"))
                 .andReturn();
 
         CorridaResponseDTO corrida = objectMapper.readValue(resPost.getResponse().getContentAsString(), CorridaResponseDTO.class);

@@ -104,6 +104,9 @@ public class Corrida {
     @Column(name = "duracao_estimada_segundos")
     private Integer duracaoEstimadaSegundos;
 
+    @Column(name = "geometria_rota", columnDefinition = "TEXT")
+    private String geometriaRota;
+
     @Transient
     private final List<Object> domainEvents = new ArrayList<>();
 

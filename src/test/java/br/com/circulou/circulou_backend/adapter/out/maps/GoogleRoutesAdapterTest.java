@@ -41,13 +41,13 @@ class GoogleRoutesAdapterTest {
         GeoCoordinate destino = new GeoCoordinate(-23.5596, -46.6583);
 
         GoogleRoutesResponse response = new GoogleRoutesResponse(
-                List.of(new GoogleRoutesResponse.Route(5234, "742s"))
+                List.of(new GoogleRoutesResponse.Route(5234, "742s", new GoogleRoutesResponse.Polyline("encoded-polyline-test")))
         );
 
         mockServer.expect(requestTo("https://routes.googleapis.com/directions/v2:computeRoutes"))
                 .andExpect(method(HttpMethod.POST))
                 .andExpect(header("X-Goog-Api-Key", "test-api-key"))
-                .andExpect(header("X-Goog-FieldMask", "routes.distanceMeters,routes.duration"))
+                .andExpect(header("X-Goog-FieldMask", "routes.distanceMeters,routes.duration,routes.polyline.encodedPolyline"))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.origin.location.latLng.latitude").value(-23.5505))
                 .andExpect(jsonPath("$.origin.location.latLng.longitude").value(-46.6333))
@@ -63,7 +63,31 @@ class GoogleRoutesAdapterTest {
         // THEN
         assertThat(result.distanciaMetros()).isEqualTo(5234);
         assertThat(result.duracaoSegundos()).isEqualTo(742);
+        assertThat(result.encodedPolyline()).isEqualTo("encoded-polyline-test");
         mockServer.verify();
+    }
+
+    @Test
+    @DisplayName("Deve calcular rota com sucesso quando polyline está ausente")
+    void deveCalcularRotaComSucessoSemPolyline() throws Exception {
+        // GIVEN
+        GeoCoordinate origem = new GeoCoordinate(-23.5505, -46.6333);
+        GeoCoordinate destino = new GeoCoordinate(-23.5596, -46.6583);
+
+        GoogleRoutesResponse response = new GoogleRoutesResponse(
+                List.of(new GoogleRoutesResponse.Route(5234, "742s", null))
+        );
+
+        mockServer.expect(requestTo("https://routes.googleapis.com/directions/v2:computeRoutes"))
+                .andRespond(withSuccess(objectMapper.writeValueAsString(response), MediaType.APPLICATION_JSON));
+
+        // WHEN
+        RouteData result = adapter.calcularRota(origem, destino);
+
+        // THEN
+        assertThat(result.distanciaMetros()).isEqualTo(5234);
+        assertThat(result.duracaoSegundos()).isEqualTo(742);
+        assertThat(result.encodedPolyline()).isNull();
     }
 
     @Test
@@ -108,7 +132,7 @@ class GoogleRoutesAdapterTest {
         GeoCoordinate destino = new GeoCoordinate(-23.5596, -46.6583);
 
         GoogleRoutesResponse response = new GoogleRoutesResponse(
-                List.of(new GoogleRoutesResponse.Route(1000, "invalid"))
+                List.of(new GoogleRoutesResponse.Route(1000, "invalid", null))
         );
 
         mockServer.expect(anything())
@@ -177,7 +201,7 @@ class GoogleRoutesAdapterTest {
 
         // distanceMeters ausente
         GoogleRoutesResponse response = new GoogleRoutesResponse(
-                List.of(new GoogleRoutesResponse.Route(null, "742s"))
+                List.of(new GoogleRoutesResponse.Route(null, "742s", null))
         );
 
         mockServer.expect(anything())

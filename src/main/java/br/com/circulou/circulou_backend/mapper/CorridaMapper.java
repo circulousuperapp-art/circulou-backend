@@ -44,7 +44,8 @@ public class CorridaMapper {
                 corrida.getDistanciaEstimadaMetros(),
                 corrida.getDuracaoEstimadaSegundos(),
                 formatarDistancia(corrida.getDistanciaEstimadaMetros()),
-                formatarDuracao(corrida.getDuracaoEstimadaSegundos())
+                formatarDuracao(corrida.getDuracaoEstimadaSegundos()),
+                corrida.getGeometriaRota()
         );
     }
 

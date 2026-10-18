@@ -61,4 +61,7 @@ public class CorridaResponseDTO {
 
     @Schema(description = "Duração formatada (ex: 13 min)")
     private String duracaoFormatada;
+
+    @Schema(description = "Geometria da rota codificada (Encoded Polyline)")
+    private String geometriaRota;
 }

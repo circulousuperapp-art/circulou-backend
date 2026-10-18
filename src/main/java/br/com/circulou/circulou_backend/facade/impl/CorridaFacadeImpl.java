@@ -94,6 +94,7 @@ public class CorridaFacadeImpl implements CorridaUseCase {
         RouteData routeData = routePort.calcularRota(origem, destino);
         corrida.setDistanciaEstimadaMetros(routeData.distanciaMetros());
         corrida.setDuracaoEstimadaSegundos(routeData.duracaoSegundos());
+        corrida.setGeometriaRota(routeData.encodedPolyline());
 
         Corrida salva = corridaService.salvar(corrida);
         return corridaMapper.toResponseDTO(salva);

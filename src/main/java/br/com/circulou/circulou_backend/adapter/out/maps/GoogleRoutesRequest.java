@@ -14,5 +14,6 @@ public record GoogleRoutesRequest(
 }
 
 record GoogleRoutesResponse(List<Route> routes) {
-    public record Route(Integer distanceMeters, String duration) {}
+    public record Route(Integer distanceMeters, String duration, Polyline polyline) {}
+    public record Polyline(String encodedPolyline) {}
 }
