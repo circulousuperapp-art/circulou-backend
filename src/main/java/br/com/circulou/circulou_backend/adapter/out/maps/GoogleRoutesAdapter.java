@@ -46,7 +46,7 @@ public class GoogleRoutesAdapter implements RoutePort {
 
             return mapToRouteData(response);
         } catch (Exception e) {
-            logger.error("[GOOGLE ROUTES] Falha crítica ao calcular rota: {}", e.getMessage());
+            logger.error("[GOOGLE ROUTES] Falha crítica ao calcular rota", e);
             if (e instanceof RouteCalculationException) {
                 throw (RouteCalculationException) e;
             }

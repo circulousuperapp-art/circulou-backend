@@ -81,6 +81,7 @@ public class CorridaFacadeImpl implements CorridaUseCase {
     }
 
     @Override
+    @Transactional
     public CorridaResponseDTO solicitar(CorridaRequestDTO dto) {
         Corrida corrida = corridaMapper.toEntity(dto);
         Usuario cliente = usuarioRepositoryPort.findById(dto.getClienteId())

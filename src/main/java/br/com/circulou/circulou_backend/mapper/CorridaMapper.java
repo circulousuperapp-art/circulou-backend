@@ -5,6 +5,8 @@ import br.com.circulou.circulou_backend.dto.CorridaResponseDTO;
 import br.com.circulou.circulou_backend.model.Corrida;
 import org.springframework.stereotype.Component;
 
+import java.util.Locale;
+
 @Component
 public class CorridaMapper {
 
@@ -40,7 +42,9 @@ public class CorridaMapper {
                 origemFormatada,
                 destinoFormatado,
                 corrida.getDistanciaEstimadaMetros(),
-                corrida.getDuracaoEstimadaSegundos()
+                corrida.getDuracaoEstimadaSegundos(),
+                formatarDistancia(corrida.getDistanciaEstimadaMetros()),
+                formatarDuracao(corrida.getDuracaoEstimadaSegundos())
         );
     }
 
@@ -80,5 +84,17 @@ public class CorridaMapper {
         if (cidade != null) sb.append(", ").append(cidade);
         if (estado != null) sb.append("/").append(estado);
         return sb.toString().trim();
+    }
+
+    private String formatarDistancia(Integer metros) {
+        if (metros == null) return null;
+        double km = metros / 1000.0;
+        return String.format(Locale.of("pt", "BR"), "%.1f km", km);
+    }
+
+    private String formatarDuracao(Integer segundos) {
+        if (segundos == null) return null;
+        long minutos = Math.round(segundos / 60.0);
+        return String.format("%d min", minutos);
     }
 }
